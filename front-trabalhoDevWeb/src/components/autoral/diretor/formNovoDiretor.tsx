@@ -19,7 +19,7 @@ export default function FormNovoDiretor() {
     try {
       await criarDiretor({ nome });
       router.push("/diretor"); // Redireciona para a lista de diretores
-    } catch (err) {
+    } catch {
       setErro("Ocorreu um erro ao salvar o diretor.");
     } finally {
       setLoading(false);

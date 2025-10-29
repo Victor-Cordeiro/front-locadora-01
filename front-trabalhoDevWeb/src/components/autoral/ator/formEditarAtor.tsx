@@ -42,7 +42,7 @@ export function FormEditarAtor({ atorId }: FormEditarAtorProps) {
     try {
       await editarAtor({ id: Number(atorId), nome }); // Enviar a requisição de edição
       router.push("/ator"); // Redirecionar para a lista de atores
-    } catch (error) {
+    } catch {
       setErro("Ocorreu um erro ao salvar as alterações.");
     } finally {
       setLoading(false);

@@ -16,6 +16,4 @@ export interface ClasseUpdate extends ClasseCreate{
     id: number;
 }
 
-export interface ClasseArray extends Array<Classe>{
-
-}
+export type ClasseArray = Classe[];

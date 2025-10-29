@@ -19,7 +19,7 @@ export default function FormNovoAtor() {
     try {
       await criarAtor({ nome });
       router.push("/ator"); // Redireciona para a lista de atores
-    } catch (err) {
+    } catch {
       setErro("Ocorreu um erro ao salvar o ator.");
     } finally {
       setLoading(false);

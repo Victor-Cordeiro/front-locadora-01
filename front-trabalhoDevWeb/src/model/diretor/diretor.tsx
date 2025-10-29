@@ -12,6 +12,4 @@ export interface DiretorUpdate extends DiretorCreate{
     id: number;
 }
 
-export interface DiretorArray extends Array<Diretor>{
-
-}
+export type DiretorArray = Diretor[];

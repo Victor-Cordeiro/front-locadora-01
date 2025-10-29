@@ -9,7 +9,7 @@ interface FormEditarDiretorProps {
 
 export function FormEditarDiretor({ diretorId }: FormEditarDiretorProps) {
   const router = useRouter();
-  const { diretor, editarDiretor } = useDiretorHook(); // Hook para editar diretor
+  const { diretor, editarDiretor, buscarDiretorPorId } = useDiretorHook(); // Hook para editar diretor (inclui buscarDiretorPorId)
   const [nome, setNome] = useState<string>(""); // Estado para armazenar o nome do diretor
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
@@ -17,13 +17,18 @@ export function FormEditarDiretor({ diretorId }: FormEditarDiretorProps) {
   // Buscar dados do diretor para preencher o formulário
   useEffect(() => {
     const fetchDiretor = async () => {
-        await buscarDiretorPorId(Number(diretorId)); // Buscar diretor por ID
-        setNome(diretor?.nome || ""); // Preencher o campo nome com o valor atual do diretor
-      
+      if (!diretorId) return;
+
+      if (!diretor || diretor.id !== Number(diretorId)) {
+        await buscarDiretorPorId(Number(diretorId));
+        return;
+      }
+
+      setNome(diretor?.nome || "");
     };
 
     fetchDiretor();
-  }, [diretorId, diretor]);
+  }, [diretorId, diretor, buscarDiretorPorId]);
 
   // Função para salvar as alterações
   const handleSubmit = async () => {
@@ -35,7 +40,7 @@ export function FormEditarDiretor({ diretorId }: FormEditarDiretorProps) {
     try {
       await editarDiretor({ id: Number(diretorId), nome }); // Enviar a requisição de edição
       router.push("/diretor"); // Redirecionar para a lista de diretores
-    } catch (error) {
+    } catch {
       setErro("Ocorreu um erro ao salvar as alterações.");
     } finally {
       setLoading(false);
@@ -90,7 +95,5 @@ export function FormEditarDiretor({ diretorId }: FormEditarDiretorProps) {
     </div>
   );
 }
-function buscarDiretorPorId(arg0: number) {
-    throw new Error("Function not implemented.");
-}
+
 

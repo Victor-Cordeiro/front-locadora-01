@@ -29,7 +29,7 @@ export default function Home() {
     return () => {
       ativo = false;
     };
-  }, []);
+  }, [listarAtores, listarClasses, listarDiretores]);
 
   const totalAtores = atores?.length || 0;
   const totalClasses = classes?.length || 0;

@@ -28,7 +28,7 @@ export function DataTableClasse() {
       // Chama o hook de deletação para remover a classe do backend
       await deletarClasse(Number(id));
       toast.success("Classe deletada com sucesso!");
-    } catch (_error) {
+    } catch {
       toast.error("Erro ao deletar classe.");
     }
   };

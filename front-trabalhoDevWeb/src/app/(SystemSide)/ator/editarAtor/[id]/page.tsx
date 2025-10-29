@@ -29,7 +29,7 @@ export default function EditarAtor() {
       }
     };
     fetchData();
-  }, [id]);
+  }, [id, buscarAtorPorId, router]);
 
   if (isLoading) {
     return (

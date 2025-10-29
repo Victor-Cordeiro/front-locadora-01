@@ -3,7 +3,7 @@
 import { CircleUserRound, ShieldUser, LogOut} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+ 
 
 export default function Sidebar() {
   const serverName = process.env.NEXT_PUBLIC_SERVER_NAME;

@@ -28,7 +28,7 @@ export function DataTableDiretor() {
     try {
       await deletarDiretor(Number(id));
       toast.success("Diretor deletado com sucesso!");
-    } catch (error) {
+    } catch {
       toast.error("Erro ao deletar diretor.");
     }
   };

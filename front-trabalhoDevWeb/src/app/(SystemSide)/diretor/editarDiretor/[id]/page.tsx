@@ -29,7 +29,7 @@ export default function EditarDiretor() {
       }
     };
     fetchData();
-  }, [id]);
+  }, [id, buscarDiretorPorId, router]);
 
   if (isLoading) {
     return (

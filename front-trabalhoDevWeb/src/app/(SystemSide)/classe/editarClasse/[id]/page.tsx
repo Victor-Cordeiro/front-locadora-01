@@ -29,7 +29,7 @@ export default function EditarClasse() {
       }
     };
     fetchData();
-  }, [id]);
+  }, [id, buscarClassePorId, router]);
 
   // Exibe uma mensagem de carregamento enquanto os dados estão sendo carregados
   if (isLoading) {

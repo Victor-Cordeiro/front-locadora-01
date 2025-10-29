@@ -9,7 +9,7 @@ interface FormEditarClasseProps {
 
 export function FormEditarClasse({ classeId }: FormEditarClasseProps) {
   const router = useRouter();
-  const { classe, editarClasse, buscarClassePorId } = useClasseHook();
+  const { editarClasse, buscarClassePorId } = useClasseHook();
 
   const [nome, setNome] = useState<string>("");
   const [valor, setValor] = useState<string>(""); // Valor será uma string temporariamente, mas vamos convertê-lo para Double
@@ -29,7 +29,7 @@ export function FormEditarClasse({ classeId }: FormEditarClasseProps) {
     };
 
     fetchClasse();
-  }, [classeId]);
+  }, [classeId, buscarClassePorId]);
 
   // Função para salvar alterações
   const handleSubmit = async () => {
@@ -48,7 +48,7 @@ export function FormEditarClasse({ classeId }: FormEditarClasseProps) {
 
       await editarClasse(classeAtualizada); // Envia a requisição de edição
       router.push("/classe"); // Redireciona para a lista de classes
-    } catch (error) {
+    } catch {
       setErro("Ocorreu um erro ao salvar as alterações.");
     } finally {
       setLoading(false);
