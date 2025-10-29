@@ -9,7 +9,7 @@ interface FormEditarAtorProps {
 
 export function FormEditarAtor({ atorId }: FormEditarAtorProps) {
   const router = useRouter();
-  const { ator, editarAtor } = useAtorHook(); // Hook para editar ator
+  const { ator, editarAtor, buscarAtorPorId } = useAtorHook(); // Hook para editar ator (inclui buscarAtorPorId)
   const [nome, setNome] = useState<string>(""); // Estado para armazenar o nome do ator
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
@@ -17,14 +17,20 @@ export function FormEditarAtor({ atorId }: FormEditarAtorProps) {
   // Buscar dados do ator para preencher o formulário
   useEffect(() => {
     const fetchAtor = async () => {
-        if(atorId){
-            await buscarAtorPorId(Number(atorId)); // Buscar ator por ID
-            setNome(ator?.nome || ""); // Preencher o campo nome com o valor atual do ator
-        }
+      if (!atorId) return;
+
+      // If the current ator in state is not the one we want, fetch it.
+      if (!ator || ator.id !== Number(atorId)) {
+        await buscarAtorPorId(Number(atorId));
+        return;
+      }
+
+      // If we already have the actor, populate the form
+      setNome(ator?.nome || "");
     };
 
     fetchAtor();
-  }, [atorId, ator]);
+  }, [atorId, ator, buscarAtorPorId]);
 
   // Função para salvar as alterações
   const handleSubmit = async () => {
@@ -91,7 +97,5 @@ export function FormEditarAtor({ atorId }: FormEditarAtorProps) {
     </div>
   );
 }
-function buscarAtorPorId(arg0: number) {
-    throw new Error("Function not implemented.");
-}
+
 

@@ -30,7 +30,7 @@ export default function FormNovoClasse() {
 
       await criarClasse(classeData); // Criando a classe
       router.push("/classe"); // Redireciona para a lista de classes
-    } catch (err) {
+    } catch (_err) {
       setErro("Ocorreu um erro ao salvar a classe.");
     } finally {
       setLoading(false);

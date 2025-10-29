@@ -28,7 +28,7 @@ export function DataTableAtor() {
     try {
       await deletarAtor(Number(id));
       toast.success("Ator deletado com sucesso!");
-    } catch (error) {
+    } catch (_error) {
       toast.error("Erro ao deletar ator.");
     }
   };

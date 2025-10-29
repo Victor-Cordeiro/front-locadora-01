@@ -12,6 +12,4 @@ export interface AtorUpdate extends AtorCreate{
     id: number;
 }
 
-export interface AtorArray extends Array<Ator>{
-
-}
+export type AtorArray = Ator[];

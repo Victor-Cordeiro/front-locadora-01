@@ -7,7 +7,6 @@ import { useState } from "react";
 
 export default function Sidebar() {
   const serverName = process.env.NEXT_PUBLIC_SERVER_NAME;
-  const [open, setOpen] = useState(false);
 
   const handleLogout = async () => {
     // Lógica de logout
