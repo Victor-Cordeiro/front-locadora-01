@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { Ator } from "@/model/ator/ator"; // Supondo que você tenha definido a interface Ator
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { useAtorHook } from "@/hooks/ator"; // Importando o hook

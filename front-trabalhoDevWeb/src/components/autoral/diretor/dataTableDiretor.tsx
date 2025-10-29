@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { Diretor } from "@/model/diretor/diretor"; // Supondo que você tenha definido a interface Diretor
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { useDiretorHook } from "@/hooks/diretor"; // Importando o hook

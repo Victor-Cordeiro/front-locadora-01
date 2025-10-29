@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import { Classe } from "@/model/classe/classe"; // Supondo que você tenha definido a interface Classe
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { useClasseHook } from "@/hooks/classe"; // Importando o hook

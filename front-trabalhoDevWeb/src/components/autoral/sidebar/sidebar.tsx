@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleUserRound, ShieldUser, ChevronDown, LogOut, MapPinned, Eye, Building2, House, ClipboardMinus } from "lucide-react";
+import { CircleUserRound, ShieldUser, LogOut} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
