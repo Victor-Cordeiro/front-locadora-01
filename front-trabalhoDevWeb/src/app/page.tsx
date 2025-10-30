@@ -7,33 +7,6 @@ import { useDiretorHook } from "@/hooks/diretor";
 
 export default function Home() {
   // Hooks das entidades
-  const { atores, listarAtores } = useAtorHook();
-  const { classes, listarClasses } = useClasseHook();
-  const { diretores, listarDiretores } = useDiretorHook();
-
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let ativo = true;
-    (async () => {
-      try {
-        await Promise.all([
-          listarAtores(),
-          listarClasses(),
-          listarDiretores()
-        ]);
-      } finally {
-        if (ativo) setLoading(false);
-      }
-    })();
-    return () => {
-      ativo = false;
-    };
-  }, [listarAtores, listarClasses, listarDiretores]);
-
-  const totalAtores = atores?.length || 0;
-  const totalClasses = classes?.length || 0;
-  const totalDiretores = diretores?.length || 0;
 
   return (
     <div className="-m-6 flex min-h-screen">
@@ -44,17 +17,17 @@ export default function Home() {
           <div className="w-full max-w-5xl grid gap-6 sm:grid-cols-3 mt-2">
             <div className="rounded-xl p-5 bg-gradient-to-br from-[#5f6368] to-[#37474f] text-white shadow-md hover:scale-[1.02] transition">
               <p className="text-sm uppercase tracking-wide text-white/70">Atores</p>
-              <p className="text-4xl font-bold mt-2">{loading ? "..." : totalAtores}</p>
+              <p className="text-4xl font-bold mt-2">14</p>
               <span className="text-xs text-white/60 mt-1 inline-block">Total cadastrados</span>
             </div>
             <div className="rounded-xl p-5 bg-gradient-to-br from-[#283593] to-[#1c2370] text-white shadow-md hover:scale-[1.02] transition">
               <p className="text-sm uppercase tracking-wide text-white/70">Classes</p>
-              <p className="text-4xl font-bold mt-2">{loading ? "..." : totalClasses}</p>
+              <p className="text-4xl font-bold mt-2">12</p>
               <span className="text-xs text-white/60 mt-1 inline-block">Total cadastradas</span>
             </div>
             <div className="rounded-xl p-5 bg-gradient-to-br from-[#f29c11] to-[#d17d0b] text-white shadow-md hover:scale-[1.02] transition">
               <p className="text-sm uppercase tracking-wide text-white/80">Diretores</p>
-              <p className="text-4xl font-bold mt-2">{loading ? "..." : totalDiretores}</p>
+              <p className="text-4xl font-bold mt-2">10</p>
               <span className="text-xs text-white/80 mt-1 inline-block">Total cadastrados</span>
             </div>
           </div>
