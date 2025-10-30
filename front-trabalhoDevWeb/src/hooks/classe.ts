@@ -1,7 +1,7 @@
 import { Classe, ClasseArray, ClasseCreate, ClasseUpdate } from "@/model/classe/classe";
 import api from "@/server/api";
 import { AxiosError } from "axios";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import toast from "react-hot-toast";
 
 export const useClasseHook = () => {
@@ -9,7 +9,7 @@ export const useClasseHook = () => {
   const [classe, setClasse] = useState<Classe | null>(null);
 
   // Criar classe (Create)
-  const criarClasse = async (classe: ClasseCreate) => {
+  const criarClasse = useCallback(async (classe: ClasseCreate) => {
     try {
       await api.post(`classes/salvarClasse`, classe);
       toast.success("Classe criada com sucesso!!!");
@@ -27,10 +27,10 @@ export const useClasseHook = () => {
       toast.error(mensagem);
       throw error;
     }
-  };
+  }, []);
 
   // Editar classe (Update)
-  const editarClasse = async (classe: ClasseUpdate) => {
+  const editarClasse = useCallback(async (classe: ClasseUpdate) => {
     try {
       const response = await api.put(`classes/editarClasse`, classe);
       setClasse(response.data);
@@ -49,32 +49,10 @@ export const useClasseHook = () => {
       toast.error(mensagem);
       throw error;
     }
-  };
-
-  // Deletar classe (Delete)
-  const deletarClasse = async (id: number) => {
-    try {
-      await api.delete(`classes/deletarClasse/${id}`);
-      toast.success("Classe deletada com sucesso!!!");
-      listarClasses(); // Recarregar a lista após deletar
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      let mensagem = "Erro desconhecido";
-      if (axiosError.response?.data) {
-        if (typeof axiosError.response.data === "string") {
-          mensagem = axiosError.response.data;
-        } else if (typeof axiosError.response.data === "object") {
-          const dataObj = axiosError.response.data as { error?: string };
-          mensagem = dataObj.error || JSON.stringify(axiosError.response.data);
-        }
-      }
-      toast.error(mensagem);
-      throw error;
-    }
-  };
+  }, []);
 
   // Listar todas as classes
-  const listarClasses = async () => {
+  const listarClasses = useCallback(async () => {
     try {
       const response = await api.get(`classes/listarClasses`);
       setClasses(response.data);
@@ -92,10 +70,31 @@ export const useClasseHook = () => {
       toast.error(mensagem);
       throw error;
     }
-  };
+  }, []);
+
+  const deletarClasse = useCallback(async (id: number) => {
+    try {
+      await api.delete(`classes/deletarClasse/${id}`);
+      toast.success("Classe deletada com sucesso!!!");
+      await listarClasses(); // Recarregar a lista após deletar
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      let mensagem = "Erro desconhecido";
+      if (axiosError.response?.data) {
+        if (typeof axiosError.response.data === "string") {
+          mensagem = axiosError.response.data;
+        } else if (typeof axiosError.response.data === "object") {
+          const dataObj = axiosError.response.data as { error?: string };
+          mensagem = dataObj.error || JSON.stringify(axiosError.response.data);
+        }
+      }
+      toast.error(mensagem);
+      throw error;
+    }
+  }, [listarClasses]);
 
   // Buscar classe por ID
-  const buscarClassePorId = async (id: number) => {
+  const buscarClassePorId = useCallback(async (id: number) => {
     try {
       const response = await api.get(`classes/buscarclasse/${id}`);
       setClasse(response.data);
@@ -114,7 +113,7 @@ export const useClasseHook = () => {
       toast.error(mensagem);
       throw error;
     }
-  };
+  }, []);
 
   return {
     classes,
