@@ -1,9 +1,6 @@
 "use client";
 import Sidebar from "@/components/autoral/sidebar/sidebar";
-import { useEffect, useState } from "react";
-import { useAtorHook } from "@/hooks/ator";
-import { useClasseHook } from "@/hooks/classe";
-import { useDiretorHook } from "@/hooks/diretor";
+
 
 export default function Home() {
   // Hooks das entidades
