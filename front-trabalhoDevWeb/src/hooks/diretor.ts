@@ -32,9 +32,8 @@ export const useDiretorHook = () => {
   // Editar diretor (Update)
   const editarDiretor = useCallback(async (diretor: DiretorUpdate) => {
     try {
-      const response = await api.put(`diretores/editarDiretor`, diretor);
-      setDiretor(response.data);
-      toast.success("Diretor editado com sucesso!!!");
+      await api.put(`diretores/${diretor.id}/editarDiretor`, diretor);
+      toast.success("Diretor editado com sucesso!");
     } catch (error) {
       const axiosError = error as AxiosError;
       let mensagem = "Erro desconhecido";

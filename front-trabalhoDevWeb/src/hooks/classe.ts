@@ -32,9 +32,8 @@ export const useClasseHook = () => {
   // Editar classe (Update)
   const editarClasse = useCallback(async (classe: ClasseUpdate) => {
     try {
-      const response = await api.put(`classes/editarClasse`, classe);
-      setClasse(response.data);
-      toast.success("Classe editada com sucesso!!!");
+      await api.put(`classes/${classe.id}/editarClasse`, classe);
+      toast.success("Classe editada com sucesso!");
     } catch (error) {
       const axiosError = error as AxiosError;
       let mensagem = "Erro desconhecido";

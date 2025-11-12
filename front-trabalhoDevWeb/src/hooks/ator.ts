@@ -9,7 +9,7 @@ export const useAtorHook = () => {
   const [ator, setAtor] = useState<Ator | null>(null);
 
   // Criar ator (Create)
-  const criarAtor = useCallback(async (ator: AtorCreate) => {
+  const criarAtor = async (ator: AtorCreate): Promise<void> => {
     try {
       await api.post(`atores/salvarAtor`, ator);
       toast.success("Ator criado com sucesso!!!");
@@ -27,14 +27,13 @@ export const useAtorHook = () => {
       toast.error(mensagem);
       throw error;
     }
-  }, []);
+  };
 
   // Editar ator (Update)
   const editarAtor = useCallback(async (ator: AtorUpdate) => {
     try {
-      const response = await api.put(`atores/editarAtor`, ator);
-      setAtor(response.data);
-      toast.success("Ator editado com sucesso!!!");
+      await api.put(`atores/${ator.id}/editarAtor`, ator);
+      toast.success("Ator editado com sucesso!");
     } catch (error) {
       const axiosError = error as AxiosError;
       let mensagem = "Erro desconhecido";
@@ -53,7 +52,7 @@ export const useAtorHook = () => {
 
   // Deletar ator (Delete)
   // Listar todos os atores
-  const listarAtores = useCallback(async () => {
+  const listarAtores = async () => {
     try {
       const response = await api.get(`atores/listarAtores`);
       setAtores(response.data);
@@ -71,7 +70,7 @@ export const useAtorHook = () => {
       toast.error(mensagem);
       throw error;
     }
-  }, []);
+  };
 
   const deletarAtor = useCallback(async (id: number) => {
     try {

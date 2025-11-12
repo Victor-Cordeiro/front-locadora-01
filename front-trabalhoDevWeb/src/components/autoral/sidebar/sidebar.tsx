@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleUserRound, ShieldUser, LogOut} from "lucide-react";
+import { CircleUserRound, ShieldUser, LogOut, Clapperboard } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
  
@@ -43,6 +43,11 @@ export default function Sidebar() {
           <Link href="/diretor" className="flex gap-3 items-center text-lg font-semibold hover:text-[#5acbff] hover:bg-[#1c2b5b] p-3 rounded-md transition duration-300">
             <CircleUserRound />
             <span>Diretor</span>
+          </Link>
+
+          <Link href="/titulo" className="flex gap-3 items-center text-lg font-semibold hover:text-[#5acbff] hover:bg-[#1c2b5b] p-3 rounded-md transition duration-300">
+            <Clapperboard />
+            <span>Título</span>
           </Link>
 
         </div>
