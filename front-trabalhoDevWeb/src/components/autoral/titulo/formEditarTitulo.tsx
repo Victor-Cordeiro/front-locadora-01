@@ -25,6 +25,7 @@ import { useDiretorHook } from "@/hooks/diretor";
 import { useAtorHook } from "@/hooks/ator";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   nome: z.string().min(1, { message: "O nome do título é obrigatório." }),
@@ -45,6 +46,7 @@ export function FormEditarTitulo({ id }: FormEditarTituloProps) {
   const { classes, listarClasses } = useClasseHook();
   const { diretores, listarDiretores } = useDiretorHook();
   const { atores, listarAtores } = useAtorHook();
+  const router = useRouter();
 
   useEffect(() => {
     listarClasses();
@@ -70,15 +72,13 @@ export function FormEditarTitulo({ id }: FormEditarTituloProps) {
       try {
         const titulo = await buscarTituloPorId(Number(id));
         if (titulo) {
-          form.reset({
-            nome: titulo.nome,
-            ano: titulo.ano.toString(),
-            sinopse: titulo.sinopse,
-            categoria: titulo.categoria,
-            classe: titulo.classe.id.toString(),
-            diretor: titulo.diretor.id.toString(),
-            atores: titulo.atores.map((ator: any) => ator.id),
-          });
+          form.setValue("nome", titulo.nome);
+          form.setValue("ano", titulo.ano);
+          form.setValue("sinopse", titulo.sinopse);
+          form.setValue("categoria", titulo.categoria);
+          form.setValue("classe", String(titulo.classe?.id));
+          form.setValue("diretor", String(titulo.diretor?.id));
+          form.setValue("atores", titulo.atores.map((ator: { id: any; }) => ator.id));
         }
       } catch (error) {
         console.error("Erro ao buscar o título:", error);
@@ -95,157 +95,163 @@ export function FormEditarTitulo({ id }: FormEditarTituloProps) {
       diretor: Number(values.diretor),
     };
     await editarTitulo(Number(id), tituloToUpdate);
+    router.push("/titulo");
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="nome"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome do Título</FormLabel>
-              <FormControl>
-                <Input placeholder="Nome do Título" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="ano"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Ano</FormLabel>
-              <FormControl>
-                <Input placeholder="Ano de lançamento" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="sinopse"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Sinopse</FormLabel>
-              <FormControl>
-                <Input placeholder="Sinopse do título" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="categoria"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Categoria</FormLabel>
-              <FormControl>
-                <Input placeholder="Categoria do título" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="classe"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Classe</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="w-full p-6 bg-white rounded-lg shadow-md"
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <FormField
+            control={form.control}
+            name="nome"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nome do Título</FormLabel>
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione uma classe" />
-                  </SelectTrigger>
+                  <Input placeholder="Nome do Título" {...field} />
                 </FormControl>
-                <SelectContent>
-                  {classes?.map((classe) => (
-                    <SelectItem key={classe.id} value={classe.id.toString()}>
-                      {classe.nome}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="diretor"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Diretor</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="ano"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Ano</FormLabel>
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione um diretor" />
-                  </SelectTrigger>
+                  <Input placeholder="Ano" {...field} />
                 </FormControl>
-                <SelectContent>
-                  {diretores?.map((diretor) => (
-                    <SelectItem key={diretor.id} value={diretor.id.toString()}>
-                      {diretor.nome}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="atores"
-          render={() => (
-            <FormItem>
-              <div className="mb-4">
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="sinopse"
+            render={({ field }) => (
+              <FormItem className="sm:col-span-2">
+                <FormLabel>Sinopse</FormLabel>
+                <FormControl>
+                  <Input placeholder="Sinopse" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="categoria"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Categoria</FormLabel>
+                <FormControl>
+                  <Input placeholder="Categoria" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="classe"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Classe</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione uma classe" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {classes?.map((classe) => (
+                      <SelectItem key={classe.id} value={String(classe.id)}>
+                        {classe.nome}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="diretor"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Diretor</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione um diretor" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {diretores?.map((diretor) => (
+                      <SelectItem key={diretor.id} value={String(diretor.id)}>
+                        {diretor.nome}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="atores"
+            render={() => (
+              <FormItem className="sm:col-span-2">
                 <FormLabel>Atores</FormLabel>
-              </div>
-              {atores?.map((ator) => (
-                <FormField
-                  key={ator.id}
-                  control={form.control}
-                  name="atores"
-                  render={({ field }) => {
-                    return (
-                      <FormItem
-                        key={ator.id}
-                        className="flex flex-row items-start space-x-3 space-y-0"
-                      >
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value?.includes(ator.id)}
-                            onCheckedChange={(checked) => {
-                              return checked
-                                ? field.onChange([...field.value, ator.id])
-                                : field.onChange(
-                                    field.value?.filter(
-                                      (value) => value !== ator.id
-                                    )
-                                  );
-                            }}
-                          />
-                        </FormControl>
-                        <FormLabel className="font-normal">
-                          {ator.nome}
-                        </FormLabel>
-                      </FormItem>
-                    );
-                  }}
-                />
-              ))}
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">Salvar</Button>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-h-48 overflow-y-auto p-4 border rounded-md">
+                  {atores?.map((ator) => (
+                    <FormField
+                      key={ator.id}
+                      control={form.control}
+                      name="atores"
+                      render={({ field }) => (
+                        <FormItem
+                          key={ator.id}
+                          className="flex flex-row items-start space-x-3 space-y-0"
+                        >
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value?.includes(ator.id)}
+                              onCheckedChange={(checked) => {
+                                return checked
+                                  ? field.onChange([...field.value, ator.id])
+                                  : field.onChange(
+                                      field.value?.filter(
+                                        (value) => value !== ator.id
+                                      )
+                                    );
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            {ator.nome}
+                          </FormLabel>
+                        </FormItem>
+                      )}
+                    />
+                  ))}
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="flex justify-end space-x-4 mt-6">
+          <Button type="submit">Salvar</Button>
+        </div>
       </form>
     </Form>
   );

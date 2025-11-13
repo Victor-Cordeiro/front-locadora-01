@@ -7,12 +7,15 @@ import { useTituloHook } from "@/hooks/titulo";
 import { FilePen } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { DialogVerTitulo } from "@/components/autoral/titulo/DialogVerTitulo";
+import { Pencil } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { AlertDialogExcluir } from "./alertDialogExcluir";
-import { DialogVerTitulo } from "./DialogVerTitulo";
 
 export function DataTableTitulo() {
   const { titulos, listarTitulos, deletarTitulo } = useTituloHook();
   const [search, setSearch] = React.useState<string>("");
+  const router = useRouter();
 
   React.useEffect(() => {
     listarTitulos();
@@ -25,9 +28,8 @@ export function DataTableTitulo() {
   const handleDelete = async (id: string) => {
     try {
       await deletarTitulo(Number(id));
-      toast.success("Título deletado com sucesso!");
-    } catch {
-      toast.error("Erro ao deletar título.");
+    } catch (error) {
+      // O erro já é tratado no hook
     }
   };
 
@@ -66,17 +68,13 @@ export function DataTableTitulo() {
                     <TableCell className="text-center">{titulo.ano}</TableCell>
                     <TableCell className="text-center">{titulo.sinopse}</TableCell>
                     <TableCell className="text-center">{titulo.categoria}</TableCell>
-<TableCell className="text-center">
-                      <div className="flex justify-center space-x-2">
-                        <DialogVerTitulo tituloId={titulo.id} />
-                        <Link href={`/titulo/editarTitulo/${titulo.id}`}>
-                          <FilePen className="cursor-pointer text-blue-500" style={{ width: 20, height: 20 }} />
-                        </Link>
-                        <AlertDialogExcluir
-                          id={titulo.id.toString()}
-                          onDelete={handleDelete}
-                        />
-                      </div>
+                    <TableCell className="flex items-center justify-center space-x-2">
+                      <Pencil
+                        className="cursor-pointer text-blue-500"
+                        style={{ width: 20, height: 20 }}
+                        onClick={() => router.push(`/titulo/editarTitulo/${titulo.id}`)}
+                      />
+                      <AlertDialogExcluir id={String(titulo.id)} onDelete={handleDelete} />
                     </TableCell>
                   </TableRow>
                 ))

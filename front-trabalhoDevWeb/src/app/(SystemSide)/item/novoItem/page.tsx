@@ -1,8 +1,7 @@
-"use client";
-import { FormNovoTitulo } from "@/components/autoral/titulo/formNovoTitulo";
+import { FormNovoItem } from "@/components/autoral/item/formNovoItem";
 import Link from "next/link";
 
-export default function NovoTituloPage() {
+export default function NovoItemPage() {
   return (
     <div className="container mx-auto py-10">
       <div className="text-sm text-gray-600 mb-5">
@@ -10,13 +9,13 @@ export default function NovoTituloPage() {
           Home
         </Link>
         <span className="mx-2">&gt;</span>
-        <Link href="/titulo" className="text-gray-500 hover:text-gray-700">
-          Título
+        <Link href="/item" className="text-gray-500 hover:text-gray-700">
+          Item
         </Link>
         <span className="mx-2">&gt;</span>
-        <span className="text-[#10476E] font-semibold">Novo Título</span>
+        <span className="text-[#10476E] font-semibold">Novo Item</span>
       </div>
-      <FormNovoTitulo />
+      <FormNovoItem />
     </div>
   );
 }

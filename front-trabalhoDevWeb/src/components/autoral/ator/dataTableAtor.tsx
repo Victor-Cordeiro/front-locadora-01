@@ -66,19 +66,14 @@ export function DataTableAtor() {
                   <TableRow key={ator.id}>
                     <TableCell className="text-center">{ator.id}</TableCell>
                     <TableCell className="text-center">{ator.nome}</TableCell>
-
-                    {/* Coluna de Ações */}
                     <TableCell className="text-center">
                       <div className="flex justify-center space-x-2">
-                        {/* Editar */}
                         <Link href={`/ator/editarAtor/${ator.id}`}>
                           <FilePen className="cursor-pointer text-blue-500" style={{ width: 20, height: 20 }} />
                         </Link>
-
-                        {/* Excluir */}
                         <AlertDialogExcluir
-                          id={ator.id.toString()} // Passando o ID do ator para o AlertDialogExcluir
-                          onDelete={handleDelete} // Função de exclusão
+                          id={ator.id.toString()}
+                          onDelete={handleDelete}
                              />
                       </div>
                     </TableCell>

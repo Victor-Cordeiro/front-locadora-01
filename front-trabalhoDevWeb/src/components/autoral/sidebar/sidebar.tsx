@@ -6,7 +6,7 @@ import Link from "next/link";
  
 
 export default function Sidebar() {
-  const serverName = process.env.NEXT_PUBLIC_SERVER_NAME;
+ 
 
   const handleLogout = async () => {
     // Lógica de logout
@@ -29,7 +29,6 @@ export default function Sidebar() {
 
         {/* Menu Links */}
         <div className="space-y-4">
-          <span className="text-blue-50-800">Servidor acessado: {serverName}</span>
           <Link href="/ator" className="flex gap-3 items-center text-lg font-semibold hover:text-[#5acbff] hover:bg-[#1c2b5b] p-3 rounded-md transition duration-300">
             <CircleUserRound />
             <span>Ator</span>
@@ -48,6 +47,10 @@ export default function Sidebar() {
           <Link href="/titulo" className="flex gap-3 items-center text-lg font-semibold hover:text-[#5acbff] hover:bg-[#1c2b5b] p-3 rounded-md transition duration-300">
             <Clapperboard />
             <span>Título</span>
+          </Link>
+          <Link href="/item" className="flex gap-3 items-center text-lg font-semibold hover:text-[#5acbff] hover:bg-[#1c2b5b] p-3 rounded-md transition duration-300">
+            <Clapperboard />
+            <span>Item</span>
           </Link>
 
         </div>

@@ -17,12 +17,8 @@ export const useClasseHook = () => {
       const axiosError = error as AxiosError;
       let mensagem = "Erro desconhecido";
       if (axiosError.response?.data) {
-        if (typeof axiosError.response.data === "string") {
-          mensagem = axiosError.response.data;
-        } else if (typeof axiosError.response.data === "object") {
-          const dataObj = axiosError.response.data as { error?: string };
-          mensagem = dataObj.error || JSON.stringify(axiosError.response.data);
-        }
+        const errorData = axiosError.response.data as { message: string };
+        mensagem = errorData.message;
       }
       toast.error(mensagem);
       throw error;
@@ -38,12 +34,8 @@ export const useClasseHook = () => {
       const axiosError = error as AxiosError;
       let mensagem = "Erro desconhecido";
       if (axiosError.response?.data) {
-        if (typeof axiosError.response.data === "string") {
-          mensagem = axiosError.response.data;
-        } else if (typeof axiosError.response.data === "object") {
-          const dataObj = axiosError.response.data as { error?: string };
-          mensagem = dataObj.error || JSON.stringify(axiosError.response.data);
-        }
+        const errorData = axiosError.response.data as { message: string };
+        mensagem = errorData.message;
       }
       toast.error(mensagem);
       throw error;
@@ -59,12 +51,8 @@ export const useClasseHook = () => {
       const axiosError = error as AxiosError;
       let mensagem = "Erro ao listar classes";
       if (axiosError.response?.data) {
-        if (typeof axiosError.response.data === "string") {
-          mensagem = axiosError.response.data;
-        } else if (typeof axiosError.response.data === "object") {
-          const dataObj = axiosError.response.data as { error?: string };
-          mensagem = dataObj.error || JSON.stringify(axiosError.response.data);
-        }
+        const errorData = axiosError.response.data as { message: string };
+        mensagem = errorData.message;
       }
       toast.error(mensagem);
       throw error;
@@ -80,12 +68,8 @@ export const useClasseHook = () => {
       const axiosError = error as AxiosError;
       let mensagem = "Erro desconhecido";
       if (axiosError.response?.data) {
-        if (typeof axiosError.response.data === "string") {
-          mensagem = axiosError.response.data;
-        } else if (typeof axiosError.response.data === "object") {
-          const dataObj = axiosError.response.data as { error?: string };
-          mensagem = dataObj.error || JSON.stringify(axiosError.response.data);
-        }
+        const errorData = axiosError.response.data as { message: string };
+        mensagem = errorData.message;
       }
       toast.error(mensagem);
       throw error;
@@ -95,19 +79,15 @@ export const useClasseHook = () => {
   // Buscar classe por ID
   const buscarClassePorId = useCallback(async (id: number) => {
     try {
-      const response = await api.get(`classes/buscarclasse/${id}`);
+      const response = await api.get(`classes/${id}/buscarClassePorId`);
       setClasse(response.data);
       return response.data;
     } catch (error) {
       const axiosError = error as AxiosError;
-      let mensagem = "Erro ao buscar classe";
+      let mensagem = "Erro ao buscar a classe";
       if (axiosError.response?.data) {
-        if (typeof axiosError.response.data === "string") {
-          mensagem = axiosError.response.data;
-        } else if (typeof axiosError.response.data === "object") {
-          const dataObj = axiosError.response.data as { error?: string };
-          mensagem = dataObj.error || JSON.stringify(axiosError.response.data);
-        }
+        const errorData = axiosError.response.data as { message: string };
+        mensagem = errorData.message;
       }
       toast.error(mensagem);
       throw error;

@@ -17,12 +17,8 @@ export const useDiretorHook = () => {
       const axiosError = error as AxiosError;
       let mensagem = "Erro desconhecido";
       if (axiosError.response?.data) {
-        if (typeof axiosError.response.data === "string") {
-          mensagem = axiosError.response.data;
-        } else if (typeof axiosError.response.data === "object") {
-          const dataObj = axiosError.response.data as { error?: string };
-          mensagem = dataObj.error || JSON.stringify(axiosError.response.data);
-        }
+        const errorData = axiosError.response.data as { message: string };
+        mensagem = errorData.message;
       }
       toast.error(mensagem);
       throw error;
@@ -38,12 +34,8 @@ export const useDiretorHook = () => {
       const axiosError = error as AxiosError;
       let mensagem = "Erro desconhecido";
       if (axiosError.response?.data) {
-        if (typeof axiosError.response.data === "string") {
-          mensagem = axiosError.response.data;
-        } else if (typeof axiosError.response.data === "object") {
-          const dataObj = axiosError.response.data as { error?: string };
-          mensagem = dataObj.error || JSON.stringify(axiosError.response.data);
-        }
+        const errorData = axiosError.response.data as { message: string };
+        mensagem = errorData.message;
       }
       toast.error(mensagem);
       throw error;
@@ -59,12 +51,8 @@ export const useDiretorHook = () => {
       const axiosError = error as AxiosError;
       let mensagem = "Erro ao listar diretores";
       if (axiosError.response?.data) {
-        if (typeof axiosError.response.data === "string") {
-          mensagem = axiosError.response.data;
-        } else if (typeof axiosError.response.data === "object") {
-          const dataObj = axiosError.response.data as { error?: string };
-          mensagem = dataObj.error || JSON.stringify(axiosError.response.data);
-        }
+        const errorData = axiosError.response.data as { message: string };
+        mensagem = errorData.message;
       }
       toast.error(mensagem);
       throw error;
@@ -75,17 +63,13 @@ export const useDiretorHook = () => {
     try {
       await api.delete(`diretores/deletarDiretor/${id}`);
       toast.success("Diretor deletado com sucesso!!!");
-      await listarDiretores();  // Recarregar a lista após deletar
+      await listarDiretores(); // Recarregar a lista após deletar
     } catch (error) {
       const axiosError = error as AxiosError;
       let mensagem = "Erro desconhecido";
       if (axiosError.response?.data) {
-        if (typeof axiosError.response.data === "string") {
-          mensagem = axiosError.response.data;
-        } else if (typeof axiosError.response.data === "object") {
-          const dataObj = axiosError.response.data as { error?: string };
-          mensagem = dataObj.error || JSON.stringify(axiosError.response.data);
-        }
+        const errorData = axiosError.response.data as { message: string };
+        mensagem = errorData.message;
       }
       toast.error(mensagem);
       throw error;
@@ -95,19 +79,15 @@ export const useDiretorHook = () => {
   // Buscar diretor por ID
   const buscarDiretorPorId = useCallback(async (id: number) => {
     try {
-      const response = await api.get(`diretores/buscarDiretor/${id}`);
+      const response = await api.get(`diretores/${id}/buscarDiretorPorId`);
       setDiretor(response.data);
       return response.data;
     } catch (error) {
       const axiosError = error as AxiosError;
-      let mensagem = "Erro ao buscar diretor";
+      let mensagem = "Erro ao buscar o diretor";
       if (axiosError.response?.data) {
-        if (typeof axiosError.response.data === "string") {
-          mensagem = axiosError.response.data;
-        } else if (typeof axiosError.response.data === "object") {
-          const dataObj = axiosError.response.data as { error?: string };
-          mensagem = dataObj.error || JSON.stringify(axiosError.response.data);
-        }
+        const errorData = axiosError.response.data as { message: string };
+        mensagem = errorData.message;
       }
       toast.error(mensagem);
       throw error;

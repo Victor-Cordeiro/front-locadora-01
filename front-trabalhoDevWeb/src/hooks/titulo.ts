@@ -16,12 +16,8 @@ export const useTituloHook = () => {
       const axiosError = error as AxiosError;
       let mensagem = "Erro desconhecido";
       if (axiosError.response?.data) {
-        if (typeof axiosError.response.data === "string") {
-          mensagem = axiosError.response.data;
-        } else if (typeof axiosError.response.data === "object") {
-          const dataObj = axiosError.response.data as { error?: string };
-          mensagem = dataObj.error || JSON.stringify(axiosError.response.data);
-        }
+        const errorData = axiosError.response.data as { message: string };
+        mensagem = errorData.message;
       }
       toast.error(mensagem);
       throw error;
@@ -37,12 +33,8 @@ export const useTituloHook = () => {
       const axiosError = error as AxiosError;
       let mensagem = "Erro desconhecido";
       if (axiosError.response?.data) {
-        if (typeof axiosError.response.data === "string") {
-          mensagem = axiosError.response.data;
-        } else if (typeof axiosError.response.data === "object") {
-          const dataObj = axiosError.response.data as { error?: string };
-          mensagem = dataObj.error || JSON.stringify(axiosError.response.data);
-        }
+        const errorData = axiosError.response.data as { message: string };
+        mensagem = errorData.message;
       }
       toast.error(mensagem);
       throw error;
@@ -57,12 +49,8 @@ export const useTituloHook = () => {
       const axiosError = error as AxiosError;
       let mensagem = "Erro ao listar títulos";
       if (axiosError.response?.data) {
-        if (typeof axiosError.response.data === "string") {
-          mensagem = axiosError.response.data;
-        } else if (typeof axiosError.response.data === "object") {
-          const dataObj = axiosError.response.data as { error?: string };
-          mensagem = dataObj.error || JSON.stringify(axiosError.response.data);
-        }
+        const errorData = axiosError.response.data as { message: string };
+        mensagem = errorData.message;
       }
       toast.error(mensagem);
       throw error;
@@ -78,12 +66,8 @@ export const useTituloHook = () => {
       const axiosError = error as AxiosError;
       let mensagem = "Erro desconhecido";
       if (axiosError.response?.data) {
-        if (typeof axiosError.response.data === "string") {
-          mensagem = axiosError.response.data;
-        } else if (typeof axiosError.response.data === "object") {
-          const dataObj = axiosError.response.data as { error?: string };
-          mensagem = dataObj.error || JSON.stringify(axiosError.response.data);
-        }
+        const errorData = axiosError.response.data as { message: string };
+        mensagem = errorData.message;
       }
       toast.error(mensagem);
       throw error;
@@ -97,14 +81,10 @@ export const useTituloHook = () => {
       return response.data;
     } catch (error) {
       const axiosError = error as AxiosError;
-      let mensagem = "Erro ao buscar título";
+      let mensagem = "Erro ao buscar o título";
       if (axiosError.response?.data) {
-        if (typeof axiosError.response.data === "string") {
-          mensagem = axiosError.response.data;
-        } else if (typeof axiosError.response.data === "object") {
-          const dataObj = axiosError.response.data as { error?: string };
-          mensagem = dataObj.error || JSON.stringify(axiosError.response.data);
-        }
+        const errorData = axiosError.response.data as { message: string };
+        mensagem = errorData.message;
       }
       toast.error(mensagem);
       throw error;

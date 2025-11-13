@@ -65,16 +65,16 @@ export function DialogVerTitulo({ tituloId }: DialogVerTituloProps) {
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <span className="font-bold col-span-1">Classe:</span>
-              <span className="col-span-3">{titulo.classe.nome}</span>
+              <span className="col-span-3">{titulo?.classe?.nome}</span>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <span className="font-bold col-span-1">Diretor:</span>
-              <span className="col-span-3">{titulo.diretor.nome}</span>
+              <span className="col-span-3">{titulo?.diretor?.nome}</span>
             </div>
             <div className="grid grid-cols-4 items-start gap-4">
               <span className="font-bold col-span-1">Atores:</span>
               <div className="col-span-3">
-                {titulo.atores.map((ator) => (
+                {titulo?.atores.map((ator) => (
                   <div key={ator.id}>{ator.nome}</div>
                 ))}
               </div>

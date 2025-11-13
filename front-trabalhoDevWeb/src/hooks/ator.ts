@@ -17,12 +17,8 @@ export const useAtorHook = () => {
       const axiosError = error as AxiosError;
       let mensagem = "Erro desconhecido";
       if (axiosError.response?.data) {
-        if (typeof axiosError.response.data === "string") {
-          mensagem = axiosError.response.data;
-        } else if (typeof axiosError.response.data === "object") {
-          const dataObj = axiosError.response.data as { error?: string };
-          mensagem = dataObj.error || JSON.stringify(axiosError.response.data);
-        }
+        const errorData = axiosError.response.data as { message: string };
+        mensagem = errorData.message;
       }
       toast.error(mensagem);
       throw error;
@@ -38,12 +34,8 @@ export const useAtorHook = () => {
       const axiosError = error as AxiosError;
       let mensagem = "Erro desconhecido";
       if (axiosError.response?.data) {
-        if (typeof axiosError.response.data === "string") {
-          mensagem = axiosError.response.data;
-        } else if (typeof axiosError.response.data === "object") {
-          const dataObj = axiosError.response.data as { error?: string };
-          mensagem = dataObj.error || JSON.stringify(axiosError.response.data);
-        }
+        const errorData = axiosError.response.data as { message: string };
+        mensagem = errorData.message;
       }
       toast.error(mensagem);
       throw error;
@@ -60,12 +52,8 @@ export const useAtorHook = () => {
       const axiosError = error as AxiosError;
       let mensagem = "Erro ao listar atores";
       if (axiosError.response?.data) {
-        if (typeof axiosError.response.data === "string") {
-          mensagem = axiosError.response.data;
-        } else if (typeof axiosError.response.data === "object") {
-          const dataObj = axiosError.response.data as { error?: string };
-          mensagem = dataObj.error || JSON.stringify(axiosError.response.data);
-        }
+        const errorData = axiosError.response.data as { message: string };
+        mensagem = errorData.message;
       }
       toast.error(mensagem);
       throw error;
@@ -81,12 +69,8 @@ export const useAtorHook = () => {
       const axiosError = error as AxiosError;
       let mensagem = "Erro desconhecido";
       if (axiosError.response?.data) {
-        if (typeof axiosError.response.data === "string") {
-          mensagem = axiosError.response.data;
-        } else if (typeof axiosError.response.data === "object") {
-          const dataObj = axiosError.response.data as { error?: string };
-          mensagem = dataObj.error || JSON.stringify(axiosError.response.data);
-        }
+        const errorData = axiosError.response.data as { message: string };
+        mensagem = errorData.message;
       }
       toast.error(mensagem);
       throw error;
@@ -96,19 +80,15 @@ export const useAtorHook = () => {
   // Buscar ator por ID
   const buscarAtorPorId = useCallback(async (id: number) => {
     try {
-      const response = await api.get(`atores/buscarAtor/${id}`);
+      const response = await api.get(`atores/${id}/buscarAtorPorId`);
       setAtor(response.data);
       return response.data;
     } catch (error) {
       const axiosError = error as AxiosError;
-      let mensagem = "Erro ao buscar ator";
+      let mensagem = "Erro ao buscar o ator";
       if (axiosError.response?.data) {
-        if (typeof axiosError.response.data === "string") {
-          mensagem = axiosError.response.data;
-        } else if (typeof axiosError.response.data === "object") {
-          const dataObj = axiosError.response.data as { error?: string };
-          mensagem = dataObj.error || JSON.stringify(axiosError.response.data);
-        }
+        const errorData = axiosError.response.data as { message: string };
+        mensagem = errorData.message;
       }
       toast.error(mensagem);
       throw error;
