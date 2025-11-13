@@ -79,7 +79,7 @@ export const useClasseHook = () => {
   // Buscar classe por ID
   const buscarClassePorId = useCallback(async (id: number) => {
     try {
-      const response = await api.get(`classes/${id}/buscarClassePorId`);
+      const response = await api.get(`classes/buscarclasse/${id}`);
       setClasse(response.data);
       return response.data;
     } catch (error) {

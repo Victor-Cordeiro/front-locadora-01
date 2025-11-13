@@ -69,6 +69,7 @@ export function DataTableTitulo() {
                     <TableCell className="text-center">{titulo.sinopse}</TableCell>
                     <TableCell className="text-center">{titulo.categoria}</TableCell>
                     <TableCell className="flex items-center justify-center space-x-2">
+                      <DialogVerTitulo tituloId={titulo.id} />
                       <Pencil
                         className="cursor-pointer text-blue-500"
                         style={{ width: 20, height: 20 }}

@@ -26,6 +26,9 @@ export const useTituloHook = () => {
 
   const editarTitulo = useCallback(async (id: number, titulo: TituloUpdate) => {
     try {
+      // Volta para o padrão dos outros recursos: PUT /titulos/{id}/editarTitulo
+      // O POST em /titulos/salvarTitulo sempre cria um novo registro (não faz upsert),
+      // causando duplicação ao invés de atualização.
       const response = await api.put(`titulos/${id}/editarTitulo`, titulo);
       setTitulo(response.data);
       toast.success("Título editado com sucesso!");
@@ -58,19 +61,54 @@ export const useTituloHook = () => {
   }, []);
 
   const deletarTitulo = useCallback(async (id: number) => {
+    const tryDelete = async (url: string) => {
+      await api.delete(url);
+    };
+
     try {
-      await api.delete(`titulos/deletarTitulo/${id}`);
+      await tryDelete(`titulos/deletarTitulo/${id}`);
       toast.success("Título deletado com sucesso!");
       await listarTitulos();
     } catch (error) {
-      const axiosError = error as AxiosError;
-      let mensagem = "Erro desconhecido";
+      const axiosError = error as AxiosError<any>;
+
+      // Fallback: alguns backends usam a rota no formato 
+      // titulos/{id}/deletarTitulo
+      if (axiosError.response?.status === 400 || axiosError.response?.status === 404) {
+        try {
+          await tryDelete(`titulos/${id}/deletarTitulo`);
+          toast.success("Título deletado com sucesso!");
+          await listarTitulos();
+          return;
+        } catch (fallbackError) {
+          const ax2 = fallbackError as AxiosError<any>;
+          let mensagem = "Erro ao deletar título";
+          if (ax2.response?.data) {
+            const data = ax2.response.data as { message?: string };
+            if (data?.message) mensagem = data.message;
+          }
+          if (ax2.response?.status === 400 || ax2.response?.status === 409) {
+            // Provável violação de integridade referencial (itens vinculados)
+            if (!/vinculad|constraint|chave/i.test(mensagem)) {
+              mensagem = "Não é possível excluir este título: existem itens vinculados a ele.";
+            }
+          }
+          toast.error(mensagem);
+          return;
+        }
+      }
+
+      let mensagem = "Erro ao deletar título";
       if (axiosError.response?.data) {
-        const errorData = axiosError.response.data as { message: string };
-        mensagem = errorData.message;
+        const data = axiosError.response.data as { message?: string };
+        if (data?.message) mensagem = data.message;
+      }
+      if (axiosError.response?.status === 400 || axiosError.response?.status === 409) {
+        if (!/vinculad|constraint|chave/i.test(mensagem)) {
+          mensagem = "Não é possível excluir este título: existem itens vinculados a ele.";
+        }
       }
       toast.error(mensagem);
-      throw error;
     }
   }, [listarTitulos]);
 

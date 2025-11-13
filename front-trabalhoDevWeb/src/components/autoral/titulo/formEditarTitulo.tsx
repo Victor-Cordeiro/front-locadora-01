@@ -24,7 +24,7 @@ import { useClasseHook } from "@/hooks/classe";
 import { useDiretorHook } from "@/hooks/diretor";
 import { useAtorHook } from "@/hooks/ator";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
@@ -47,6 +47,7 @@ export function FormEditarTitulo({ id }: FormEditarTituloProps) {
   const { diretores, listarDiretores } = useDiretorHook();
   const { atores, listarAtores } = useAtorHook();
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     listarClasses();
@@ -88,14 +89,20 @@ export function FormEditarTitulo({ id }: FormEditarTituloProps) {
   }, [id, buscarTituloPorId, form]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const tituloToUpdate = {
-      id: Number(id),
-      ...values,
-      classe: Number(values.classe),
-      diretor: Number(values.diretor),
-    };
-    await editarTitulo(Number(id), tituloToUpdate);
-    router.push("/titulo");
+    if (loading) return;
+    setLoading(true);
+    try {
+      const tituloToUpdate = {
+        id: Number(id),
+        ...values,
+        classe: Number(values.classe),
+        diretor: Number(values.diretor),
+      };
+      await editarTitulo(Number(id), tituloToUpdate);
+      router.push("/titulo");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -249,8 +256,23 @@ export function FormEditarTitulo({ id }: FormEditarTituloProps) {
             )}
           />
         </div>
-        <div className="flex justify-end space-x-4 mt-6">
-          <Button type="submit">Salvar</Button>
+        {/* Botões */}
+        <div className="flex justify-end gap-3 mb-6 mt-19">
+          <button
+            type="button"
+            onClick={form.handleSubmit(onSubmit)}
+            className="bg-[#10476E] text-white px-6 py-2 rounded-md shadow"
+            disabled={loading}
+          >
+            {loading ? "Salvando..." : "Salvar"}
+          </button>
+          <button
+            type="button"
+            onClick={() => router.push("/titulo")}
+            className="bg-gray-400 text-white px-6 py-2 rounded-md shadow"
+          >
+            Cancelar
+          </button>
         </div>
       </form>
     </Form>

@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useItemHook } from "@/hooks/item";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
     Select,
     SelectContent,
@@ -39,6 +39,7 @@ export function FormEditarItem({ id }: FormEditarItemProps) {
     const { item, buscarItemPorId, editarItem } = useItemHook();
     const { titulos, listarTitulos } = useTituloHook();
     const router = useRouter();
+    const [loading, setLoading] = useState(false);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -65,12 +66,18 @@ export function FormEditarItem({ id }: FormEditarItemProps) {
     }, [id, buscarItemPorId, form, listarTitulos]);
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        const itemRequest = {
-            ...values,
-            titulo: Number(values.titulo),
-        };
-        await editarItem(id, itemRequest);
-        router.push("/item");
+        if (loading) return;
+        setLoading(true);
+        try {
+            const itemRequest = {
+                ...values,
+                titulo: Number(values.titulo),
+            };
+            await editarItem(id, itemRequest);
+            router.push("/item");
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -139,7 +146,24 @@ export function FormEditarItem({ id }: FormEditarItemProps) {
                         </FormItem>
                     )}
                 />
-                <Button type="submit">Salvar</Button>
+                {/* Botões */}
+                <div className="flex justify-end gap-3 mb-6 mt-19">
+                    <button
+                        type="button"
+                        onClick={form.handleSubmit(onSubmit)}
+                        className="bg-[#10476E] text-white px-6 py-2 rounded-md shadow"
+                        disabled={loading}
+                    >
+                        {loading ? "Salvando..." : "Salvar"}
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => router.push("/item")}
+                        className="bg-gray-400 text-white px-6 py-2 rounded-md shadow"
+                    >
+                        Cancelar
+                    </button>
+                </div>
             </form>
         </Form>
     );

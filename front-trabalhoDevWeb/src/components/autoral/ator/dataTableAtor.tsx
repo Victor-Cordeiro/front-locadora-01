@@ -57,7 +57,7 @@ export function DataTableAtor() {
               <TableRow>
                 <TableHead className="text-center">ID</TableHead>
                 <TableHead className="text-center">Nome do Ator</TableHead>
-                <TableHead className="text-center">Ações</TableHead> {/* Coluna de Ações */}
+                <TableHead className="text-center">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

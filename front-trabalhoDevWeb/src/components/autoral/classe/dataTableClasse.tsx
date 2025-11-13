@@ -57,7 +57,7 @@ export function DataTableClasse() {
                 <TableHead className="text-center">Nome da Classe</TableHead>
                 <TableHead className="text-center">Valor</TableHead>
                 <TableHead className="text-center">Prazo de Devolução</TableHead>
-                <TableHead className="text-center">Ações</TableHead> {/* Coluna de Ações */}
+                <TableHead className="text-center">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

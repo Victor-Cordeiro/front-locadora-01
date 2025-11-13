@@ -80,7 +80,7 @@ export const useAtorHook = () => {
   // Buscar ator por ID
   const buscarAtorPorId = useCallback(async (id: number) => {
     try {
-      const response = await api.get(`atores/${id}/buscarAtorPorId`);
+      const response = await api.get(`atores/buscarAtor/${id}`);
       setAtor(response.data);
       return response.data;
     } catch (error) {
