@@ -8,8 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, Clapperboard, LogIn, Filter, X, Film, User, Tag } from "lucide-react";
 import { Titulo } from "@/model/titulo/titulo";
 import { MovieCard } from "@/components/autoral/cliente/MovieCard";
-import { MovieDetailModal } from "@/components/autoral/cliente/MovieDetailModal";
 import { cn } from "@/lib/utils"; // Importante para classes condicionais
+import { MovieDetailModal } from "@/components/autoral/cliente/MovieDetailModal";
 
 type FilterType = "nome" | "categoria" | "ator";
 
