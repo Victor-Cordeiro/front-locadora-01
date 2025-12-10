@@ -53,6 +53,22 @@ export default function Sidebar() {
             <span>Item</span>
           </Link>
 
+
+          <Link href="/dependente" className="flex gap-3 items-center text-lg font-semibold hover:text-[#5acbff] hover:bg-[#1c2b5b] p-3 rounded-md transition duration-300">
+            <Clapperboard />
+            <span>Dependente</span>
+          </Link>
+
+          <Link href="/socio" className="flex gap-3 items-center text-lg font-semibold hover:text-[#5acbff] hover:bg-[#1c2b5b] p-3 rounded-md transition duration-300">
+            <CircleUserRound />
+            <span>Sócio</span>
+          </Link>
+
+          <Link href="/locacao" className="flex gap-3 items-center text-lg font-semibold hover:text-[#5acbff] hover:bg-[#1c2b5b] p-3 rounded-md transition duration-300">
+            <Clapperboard />
+            <span>Locação</span>
+          </Link>
+
         </div>
       </div>
 

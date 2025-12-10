@@ -1,15 +1,19 @@
-import Sidebar from "@/components/autoral/sidebar/sidebar";
+import { AdminHeader } from "@/components/autoral/admin/header";
 
-export default function RootLayout({
+export default function SystemLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex">
-      <Sidebar />
-      {/* Para fundo exclusivo das páginas internas, adicione uma classe de bg aqui ou num wrapper */}
-      <main className="flex-1 p-6">{children}</main>
+    <div className="flex flex-col min-h-screen bg-[#f1f5ff]">
+      {/* Novo Header Superior */}
+      <AdminHeader />
+      
+      {/* Conteúdo da página (sem margem lateral) */}
+      <main className="flex-1 container mx-auto p-6 md:p-10">
+        {children}
+      </main>
     </div>
   );
 }
