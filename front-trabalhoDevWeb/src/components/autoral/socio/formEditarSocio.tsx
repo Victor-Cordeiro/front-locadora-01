@@ -22,19 +22,17 @@ import {
 import { useSocioHook } from "@/hooks/socio";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Plus, Trash, User, Users } from "lucide-react";
+import { Plus, Trash, User } from "lucide-react";
 import { SocioUpdate } from "@/model/socio/socio";
-import { DependenteCreate } from "@/model/dependente/dependente";
+import { Dependente } from "@/model/dependente/dependente"; // Importação Importante
 
-// ... (Schemas permanecem iguais)
+// Schema ajustado sem CPF/Endereço para dependentes
 const dependenteSchema = z.object({
+    id: z.number().optional(),
     numInscricao: z.string().min(1, "Obrigatório"),
     nome: z.string().min(1, "Obrigatório"),
     dataNascimento: z.string().min(1, "Obrigatória"),
     sexo: z.string().min(1, "Obrigatório"),
-    cpf: z.string().min(1, "Obrigatório"),
-    endereco: z.string().optional(),
-    telefone: z.string().optional(),
 });
 
 const socioSchema = z.object({
@@ -81,24 +79,33 @@ export function FormEditarSocio({ id }: FormEditarSocioProps) {
         if(id) {
             const socioData = await buscarSocioPorId(Number(id));
             if(socioData) {
-                // ... (preenchimento do formulário permanece igual)
+                // Preenche dados do Sócio
                 form.setValue("nome", socioData.nome);
                 form.setValue("numInscricao", socioData.numInscricao);
                 form.setValue("cpf", socioData.cpf);
                 form.setValue("endereco", socioData.endereco);
                 form.setValue("telefone", socioData.telefone);
-                form.setValue("dataNascimento", socioData.dataNascimento);
+                
+                // Formata data do sócio
+                const dataSocio = socioData.dataNascimento 
+                    ? new Date(socioData.dataNascimento).toISOString().split("T")[0] 
+                    : "";
+                form.setValue("dataNascimento", dataSocio);
+                
                 form.setValue("sexo", socioData.sexo);
                 
+                // Preenche dependentes
                 if(socioData.dependentes && socioData.dependentes.length > 0) {
-                    replace(socioData.dependentes.map(dep => ({
+                    // AQUI ESTÁ A CORREÇÃO: Tipagem explicita (dep: Dependente)
+                    replace(socioData.dependentes.map((dep: Dependente) => ({
+                        id: dep.id,
                         numInscricao: dep.numInscricao,
                         nome: dep.nome,
-                        dataNascimento: dep.dataNascimento,
+                        // Formata data do dependente
+                        dataNascimento: dep.dataNascimento 
+                            ? new Date(dep.dataNascimento).toISOString().split("T")[0] 
+                            : "",
                         sexo: dep.sexo,
-                        cpf: dep.cpf,
-                        endereco: dep.endereco,
-                        telefone: dep.telefone
                     })));
                 }
             }
@@ -108,33 +115,18 @@ export function FormEditarSocio({ id }: FormEditarSocioProps) {
   }, [id, buscarSocioPorId, form, replace]);
 
   async function onSubmit(values: z.infer<typeof socioSchema>) {
-    // ... (Lógica de submit permanece igual)
     setLoading(true);
     try {
-        const dependentesFormatados: DependenteCreate[] = values.dependentes.map(d => ({
-            numInscricao: d.numInscricao,
-            nome: d.nome,
-            dataNascimento: d.dataNascimento,
-            sexo: d.sexo,
-            cpf: d.cpf,
-            endereco: d.endereco || "",
-            telefone: d.telefone || ""
-        }));
-
         const payload: SocioUpdate = {
             id: Number(id),
-            numInscricao: values.numInscricao,
-            nome: values.nome,
-            cpf: values.cpf,
-            endereco: values.endereco,
-            telefone: values.telefone,
-            dataNascimento: values.dataNascimento,
-            sexo: values.sexo,
-            dependentes: dependentesFormatados
+            ...values,
+            dependentes: values.dependentes // Já está no formato correto
         };
 
         await editarSocio(Number(id), payload);
         router.push("/socio");
+    } catch (error) {
+        console.error("Erro ao editar sócio:", error);
     } finally {
       setLoading(false);
     }
@@ -144,6 +136,7 @@ export function FormEditarSocio({ id }: FormEditarSocioProps) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         
+        {/* Card do Sócio */}
         <div className="bg-white p-6 rounded-md shadow border">
             <h2 className="text-xl font-bold text-[#10476E] mb-4 flex items-center gap-2">
                 <User /> Editar Sócio
@@ -152,14 +145,13 @@ export function FormEditarSocio({ id }: FormEditarSocioProps) {
                 <FormField control={form.control} name="numInscricao" render={({ field }) => (
                     <FormItem>
                         <FormLabel>Nº Inscrição</FormLabel>
-                        {/* ALTERAÇÃO AQUI: Adicionado disabled e bg-gray-100 para indicar leitura */}
                         <FormControl>
                             <Input {...field} disabled className="bg-gray-100 text-gray-500 cursor-not-allowed" />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
                 )} />
-                {/* ... (Resto do formulário permanece igual) */}
+                
                 <FormField control={form.control} name="nome" render={({ field }) => (
                     <FormItem className="col-span-2"><FormLabel>Nome</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
@@ -182,34 +174,48 @@ export function FormEditarSocio({ id }: FormEditarSocioProps) {
             </div>
         </div>
 
-        {/* ... (Seção de Dependentes permanece igual) */}
+        {/* Card dos Dependentes */}
         <div className="bg-gray-50 p-6 rounded-md shadow border border-dashed border-gray-400">
             <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold text-gray-700">Dependentes ({fields.length}/3)</h3>
                 {fields.length < 3 && (
-                    <Button type="button" variant="outline" onClick={() => append({ numInscricao: "", nome: "", cpf: "", dataNascimento: "", sexo: "", endereco: "", telefone: "" })} className="border-blue-500 text-blue-600 hover:bg-blue-50">
+                    <Button type="button" variant="outline" onClick={() => append({ numInscricao: "", nome: "", dataNascimento: "", sexo: ""})} className="border-blue-500 text-blue-600 hover:bg-blue-50">
                         <Plus className="w-4 h-4 mr-2"/> Adicionar
                     </Button>
                 )}
             </div>
+            
+            {/* Lista de Dependentes */}
             {fields.map((field, index) => (
-                <div key={field.id} className="relative bg-white p-4 mb-4 rounded border border-gray-200">
+                <div key={field.id} className="relative bg-white p-4 mb-4 rounded border border-gray-200 shadow-sm">
                     <div className="absolute top-2 right-2">
-                        <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}><Trash className="w-4 h-4 text-red-500"/></Button>
+                        <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}>
+                            <Trash className="w-4 h-4 text-red-500"/>
+                        </Button>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                         <FormField control={form.control} name={`dependentes.${index}.nome`} render={({ field }) => (<FormItem className="col-span-2"><FormLabel className="text-xs">Nome</FormLabel><FormControl><Input className="h-8 text-sm" {...field} /></FormControl></FormItem>)} />
-                         {/* ALTERAÇÃO AQUI TAMBÉM: Nº Inscrição do dependente desabilitado se desejar, mas como é um array dinâmico, geralmente no update permite-se editar se for criar novo, mas aqui estamos editando. Se o ID existir, deveria bloquear. Como o DTO de update não tem ID nos dependentes, tecnicamente estamos recriando a lista. Deixarei editável ou fixo dependendo da sua regra. Vou deixar editável pois pode ser um novo dependente na lista. */}
-                         <FormField control={form.control} name={`dependentes.${index}.numInscricao`} render={({ field }) => (<FormItem><FormLabel className="text-xs">Inscrição</FormLabel><FormControl><Input className="h-8 text-sm" {...field} /></FormControl></FormItem>)} />
-                         {/* ... Resto dos campos */}
-                         <FormField control={form.control} name={`dependentes.${index}.cpf`} render={({ field }) => (<FormItem><FormLabel className="text-xs">CPF</FormLabel><FormControl><Input className="h-8 text-sm" {...field} /></FormControl></FormItem>)} />
-                         <FormField control={form.control} name={`dependentes.${index}.dataNascimento`} render={({ field }) => (<FormItem><FormLabel className="text-xs">Data Nasc.</FormLabel><FormControl><Input type="date" className="h-8 text-sm" {...field} /></FormControl></FormItem>)} />
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                         <FormField control={form.control} name={`dependentes.${index}.nome`} render={({ field }) => (
+                             <FormItem className="col-span-2"><FormLabel className="text-xs">Nome</FormLabel><FormControl><Input className="h-8 text-sm" {...field} /></FormControl><FormMessage /></FormItem>
+                         )} />
+                         <FormField control={form.control} name={`dependentes.${index}.numInscricao`} render={({ field }) => (
+                             <FormItem><FormLabel className="text-xs">Inscrição</FormLabel><FormControl><Input className="h-8 text-sm" {...field} /></FormControl><FormMessage /></FormItem>
+                         )} />
+                         <FormField control={form.control} name={`dependentes.${index}.dataNascimento`} render={({ field }) => (
+                             <FormItem><FormLabel className="text-xs">Data Nasc.</FormLabel><FormControl><Input type="date" className="h-8 text-sm" {...field} /></FormControl><FormMessage /></FormItem>
+                         )} />
                          <FormField control={form.control} name={`dependentes.${index}.sexo`} render={({ field }) => (
-                            <FormItem><FormLabel className="text-xs">Sexo</FormLabel><Select onValueChange={field.onChange} value={field.value}><FormControl><SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger></FormControl><SelectContent><SelectItem value="Masculino">Masculino</SelectItem><SelectItem value="Feminino">Feminino</SelectItem></SelectContent></Select></FormItem>
+                            <FormItem><FormLabel className="text-xs">Sexo</FormLabel>
+                                <Select onValueChange={field.onChange} value={field.value}>
+                                    <FormControl><SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Selecione"/></SelectTrigger></FormControl>
+                                    <SelectContent><SelectItem value="Masculino">Masculino</SelectItem><SelectItem value="Feminino">Feminino</SelectItem></SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
                          )} />
                     </div>
                 </div>
             ))}
+            {fields.length === 0 && <p className="text-center text-gray-400 italic py-4">Nenhum dependente vinculado.</p>}
         </div>
 
         <div className="flex justify-end gap-3 mt-6">

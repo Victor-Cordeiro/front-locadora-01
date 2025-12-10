@@ -3,9 +3,6 @@ export interface DependenteCreate {
     nome: string;
     dataNascimento: string;
     sexo: string;
-    cpf: string;
-    endereco: string;
-    telefone: string;
 }
 
 export interface Dependente {
@@ -15,13 +12,8 @@ export interface Dependente {
     dataNascimento: string;
     sexo: string;
     estahAtivo: boolean;
-    cpf: string;
-    endereco: string;
-    telefone: string;
 }
 
-export interface DependenteUpdate extends DependenteCreate{
-    id: number;
+export interface DependenteUpdate extends DependenteCreate {
+    id?: number; // Opcional pois novos dependentes na edição não têm ID ainda
 }
-
-

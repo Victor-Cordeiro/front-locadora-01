@@ -2,9 +2,10 @@
 import { useState, useEffect } from "react";
 import { useClasseHook } from "@/hooks/classe";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 interface FormEditarClasseProps {
-  classeId: string; // ID da classe a ser editada
+  classeId: string;
 }
 
 export function FormEditarClasse({ classeId }: FormEditarClasseProps) {
@@ -12,44 +13,54 @@ export function FormEditarClasse({ classeId }: FormEditarClasseProps) {
   const { editarClasse, buscarClassePorId } = useClasseHook();
 
   const [nome, setNome] = useState<string>("");
-  const [valor, setValor] = useState<string>(""); // Valor será uma string temporariamente, mas vamos convertê-lo para Double
-  const [prazoDevolucao, setPrazoDevolucao] = useState<string>(""); // Prazo de devolução será uma string, mas será convertido para o formato adequado no backend
+  const [valor, setValor] = useState<string>(""); 
+  const [prazoDevolucao, setPrazoDevolucao] = useState<string>(""); 
+  
   const [loading, setLoading] = useState(false);
-  const [erro, setErro] = useState<string | null>(null);
 
-  // Carregar os dados da classe ao inicializar
   useEffect(() => {
     const fetchClasse = async () => {
       if (classeId) {
-        const data = await buscarClassePorId(Number(classeId)); // Buscar a classe pelo ID
-        setNome(data?.nome || "");
-        setValor(data?.valor.toString() || ""); // Convertendo o valor para string
-        setPrazoDevolucao(data?.prazoDevolucao || "");
+        try {
+            const data = await buscarClassePorId(Number(classeId));
+            if (data) {
+                setNome(data.nome);
+                setValor(data.valor.toString());
+                // Garante que o prazo venha como string para o input
+                setPrazoDevolucao(data.prazoDevolucao.toString()); 
+            }
+        } catch (error) {
+            console.error("Erro ao carregar classe", error);
+            toast.error("Erro ao carregar dados da classe.");
+        }
       }
     };
-
     fetchClasse();
   }, [classeId, buscarClassePorId]);
 
-  // Função para salvar alterações
   const handleSubmit = async () => {
     if (loading) return;
 
+    const prazo = Number(prazoDevolucao);
+    if (!prazoDevolucao || isNaN(prazo) || prazo < 0) {
+        toast.error("O prazo de devolução deve ser um número válido e não negativo.");
+        return;
+    }
+
     setLoading(true);
-    setErro(null);
 
     try {
       const classeAtualizada = {
-        id: Number(classeId), // ID da classe
+        id: Number(classeId),
         nome,
-        valor: valor, // Mantendo como string
-        prazoDevolucao: prazoDevolucao, // Prazo de devolução como string
+        valor: Number(valor),
+        prazoDevolucao: prazo,
       };
 
-      await editarClasse(classeAtualizada); // Envia a requisição de edição
-      router.push("/classe"); // Redireciona para a lista de classes
+      await editarClasse(classeAtualizada);
+      router.push("/classe");
     } catch {
-      setErro("Ocorreu um erro ao salvar as alterações.");
+      toast.error("Ocorreu um erro ao salvar as alterações.");
     } finally {
       setLoading(false);
     }
@@ -57,74 +68,83 @@ export function FormEditarClasse({ classeId }: FormEditarClasseProps) {
 
   return (
     <div className="w-full min-h-screen p-6 bg-white">
-      {/* Breadcrumb */}
       <div className="text-sm text-gray-600 mb-4">
         <span className="text-gray-500">Home &gt; Classe &gt; </span>
         <span className="text-[#10476E] font-semibold">Editar Classe</span>
       </div>
 
-      {/* Formulário de Edição */}
-      <div className="bg-white p-6 rounded-md">
-        {/* Nome da Classe */}
-        <div className="grid grid-cols-2 gap-6">
+      <div className="bg-white p-6 rounded-md shadow-sm border border-gray-100">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <label className="block text-gray-700 font-medium mb-1">
               Nome da Classe <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              className="w-full border border-gray-300 rounded-md p-2"
+              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-[#10476E] focus:outline-none"
               value={nome}
-              onChange={(e) => setNome(e.target.value)} // Atualiza o nome
+              onChange={(e) => setNome(e.target.value)}
             />
           </div>
 
-          {/* Valor da Classe */}
           <div>
             <label className="block text-gray-700 font-medium mb-1">
-              Valor <span className="text-red-500">*</span>
+              Valor (R$) <span className="text-red-500">*</span>
             </label>
             <input
               type="number"
               step="0.01"
-              className="w-full border border-gray-300 rounded-md p-2"
+              min="0"
+              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-[#10476E] focus:outline-none"
               value={valor}
-              onChange={(e) => setValor(e.target.value)} // Atualiza o valor
+              onChange={(e) => {
+                const val = parseFloat(e.target.value);
+                if (!isNaN(val) && val >= 0 || e.target.value === "") {
+                    setValor(e.target.value);
+                }
+              }}
             />
           </div>
 
-          {/* Prazo de Devolução */}
+          {/* Prazo de Devolução - CORRIGIDO PARA NUMBER */}
           <div>
             <label className="block text-gray-700 font-medium mb-1">
-              Prazo de Devolução <span className="text-red-500">*</span>
+              Prazo Devolução (Dias) <span className="text-red-500">*</span>
             </label>
             <input
-              type="date"
-              className="w-full border border-gray-300 rounded-md p-2"
+              type="number"
+              min="0"
+              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-[#10476E] focus:outline-none"
               value={prazoDevolucao}
-              onChange={(e) => setPrazoDevolucao(e.target.value)} // Atualiza o prazo de devolução
+              onChange={(e) => {
+                const val = parseInt(e.target.value);
+                if (!isNaN(val) && val >= 0 || e.target.value === "") {
+                    setPrazoDevolucao(e.target.value);
+                }
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "-" || e.key === "e") {
+                    e.preventDefault();
+                }
+              }}
             />
           </div>
         </div>
       </div>
 
-      {/* Exibindo mensagem de erro, se houver */}
-      {erro && <div className="text-red-500 mt-2">{erro}</div>}
-
-      {/* Botões */}
-      <div className="flex justify-end gap-3 mb-6 mt-19">
+      <div className="flex justify-end gap-3 mt-6">
+        <button
+          onClick={() => router.push("/classe")}
+          className="bg-gray-200 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-300 transition-colors"
+        >
+          Cancelar
+        </button>
         <button
           onClick={handleSubmit}
-          className="bg-[#10476E] text-white px-6 py-2 rounded-md shadow"
+          className="bg-[#10476E] text-white px-6 py-2 rounded-md shadow hover:bg-[#0e3b5b] transition-colors disabled:opacity-50"
           disabled={loading}
         >
           {loading ? "Salvando..." : "Salvar"}
-        </button>
-        <button
-          onClick={() => router.push("/classe")}
-          className="bg-gray-400 text-white px-6 py-2 rounded-md shadow"
-        >
-          Cancelar
         </button>
       </div>
     </div>

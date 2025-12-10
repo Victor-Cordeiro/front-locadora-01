@@ -9,21 +9,24 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useLocacaoHook } from "@/hooks/locacao";
 import { useSocioHook } from "@/hooks/socio";
 import { useItemHook } from "@/hooks/item";
+import { useTituloHook } from "@/hooks/titulo"; // <--- Novo hook
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CalendarIcon, CreditCard, User, Film } from "lucide-react";
 
+// Schema de validação
 const formSchema = z.object({
     idCliente: z.string().min(1, "Cliente é obrigatório"),
     idItem: z.string().min(1, "Item é obrigatório"),
     dtDevolucaoPrevista: z.string().min(1, "Data prevista é obrigatória"),
-    valorCobrado: z.string().optional(),
+    valorCobrado: z.string().min(1, "Valor é obrigatório"),
 });
 
 export function FormNovaLocacao() {
   const { criarLocacao } = useLocacaoHook();
   const { socios, listarSocios } = useSocioHook();
   const { itens, listarItens } = useItemHook();
+  const { titulos, listarTitulos } = useTituloHook(); // <--- Usamos titulos para descobrir a classe
   
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -31,7 +34,8 @@ export function FormNovaLocacao() {
   useEffect(() => {
     listarSocios();
     listarItens();
-  }, [listarSocios, listarItens]);
+    listarTitulos(); // <--- Carrega os títulos com suas classes e itens
+  }, [listarSocios, listarItens, listarTitulos]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -43,6 +47,41 @@ export function FormNovaLocacao() {
     },
   });
 
+  // Monitora a seleção do Item
+  const watchIdItem = form.watch("idItem");
+
+  useEffect(() => {
+    if (watchIdItem && titulos) {
+        const idSelecionado = Number(watchIdItem);
+        
+        // Lógica: Procura em todos os títulos qual deles contém o item selecionado
+        const tituloEncontrado = titulos.find(t => 
+            t.itens?.some(item => item.id === idSelecionado)
+        );
+        
+        if (tituloEncontrado && tituloEncontrado.classe) {
+            const classe = tituloEncontrado.classe;
+            
+            // 1. Define Valor sugerido da Classe
+            // (Converte para string pois o input espera string ou number controlado)
+            form.setValue("valorCobrado", String(classe.valor));
+
+            // 2. Define Data Prevista (Hoje + Prazo da Classe em dias)
+            const hoje = new Date();
+            const prazoDias = Number(classe.prazoDevolucao);
+            
+            if (!isNaN(prazoDias)) {
+                const dataPrevista = new Date(hoje);
+                dataPrevista.setDate(hoje.getDate() + prazoDias);
+                
+                // Formata para YYYY-MM-DD
+                const dataFormatada = dataPrevista.toISOString().split('T')[0];
+                form.setValue("dtDevolucaoPrevista", dataFormatada);
+            }
+        }
+    }
+  }, [watchIdItem, titulos, form]);
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     try {
@@ -50,8 +89,7 @@ export function FormNovaLocacao() {
             idCliente: Number(values.idCliente),
             idItem: Number(values.idItem),
             dtDevolucaoPrevista: values.dtDevolucaoPrevista,
-            // Converte string para number se houver valor
-            valorCobrado: values.valorCobrado ? Number(values.valorCobrado) : undefined
+            valorCobrado: Number(values.valorCobrado)
         };
         
         await criarLocacao(payload);
@@ -70,7 +108,7 @@ export function FormNovaLocacao() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
-                {/* Seleção de Cliente */}
+                {/* Cliente */}
                 <FormField
                     control={form.control}
                     name="idCliente"
@@ -96,7 +134,7 @@ export function FormNovaLocacao() {
                     )}
                 />
 
-                {/* Seleção de Item */}
+                {/* Item - Mostramos a lista de Itens normalmente */}
                 <FormField
                     control={form.control}
                     name="idItem"
@@ -110,11 +148,16 @@ export function FormNovaLocacao() {
                             </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                {itens?.map((item) => (
-                                    <SelectItem key={item.id} value={String(item.id)}>
-                                        {item.numSerie} - {item.titulo?.nome} ({item.tipoItem})
-                                    </SelectItem>
-                                ))}
+                                {itens?.map((item) => {
+                                    // Podemos tentar achar o nome do título aqui também para exibir bonito na lista,
+                                    // usando a mesma lógica dos titulos, ou usar o que já vem no item se disponível.
+                                    // Como não mudamos o back, item.titulo pode estar vazio, então usamos apenas o numSerie e tipo.
+                                    return (
+                                        <SelectItem key={item.id} value={String(item.id)}>
+                                            {item.numSerie} - {item.tipoItem}
+                                        </SelectItem>
+                                    );
+                                })}
                             </SelectContent>
                         </Select>
                         <FormMessage />
@@ -122,6 +165,7 @@ export function FormNovaLocacao() {
                     )}
                 />
 
+                {/* Data Prevista */}
                 <FormField
                     control={form.control}
                     name="dtDevolucaoPrevista"
@@ -136,12 +180,13 @@ export function FormNovaLocacao() {
                     )}
                 />
 
+                {/* Valor */}
                 <FormField
                     control={form.control}
                     name="valorCobrado"
                     render={({ field }) => (
                     <FormItem>
-                        <FormLabel className="flex items-center gap-2"><CreditCard size={16}/> Valor (Opcional)</FormLabel>
+                        <FormLabel className="flex items-center gap-2"><CreditCard size={16}/> Valor da Locação (R$)</FormLabel>
                         <FormControl>
                             <Input type="number" step="0.01" placeholder="0.00" {...field} />
                         </FormControl>

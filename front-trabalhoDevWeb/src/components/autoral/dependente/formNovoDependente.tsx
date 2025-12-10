@@ -20,9 +20,6 @@ const formSchema = z.object({
     nome: z.string().min(1, "Obrigatório"),
     dataNascimento: z.string().min(1, "Obrigatória"),
     sexo: z.string().min(1, "Obrigatório"),
-    cpf: z.string().min(11, "CPF inválido"),
-    endereco: z.string().optional(),
-    telefone: z.string().optional(),
 });
 
 export function FormNovoDependente() {
@@ -45,9 +42,6 @@ export function FormNovoDependente() {
       idSocio: "",
       numInscricao: "",
       nome: "",
-      cpf: "",
-      endereco: "",
-      telefone: "",
       dataNascimento: "",
       sexo: "",
     },
@@ -66,10 +60,7 @@ export function FormNovoDependente() {
     try {
         const { idSocio, ...dependenteData } = values;
         const data = {
-            ...dependenteData,
-            endereco: dependenteData.endereco || "",
-            telefone: dependenteData.telefone || ""
-        };
+            ...dependenteData};
         await criarDependente(Number(idSocio), data);
         router.push("/dependente");
     } finally {
@@ -166,9 +157,6 @@ export function FormNovoDependente() {
                 <FormField control={form.control} name="nome" render={({ field }) => (
                     <FormItem className="col-span-2"><FormLabel>Nome Completo</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
-                <FormField control={form.control} name="cpf" render={({ field }) => (
-                    <FormItem><FormLabel>CPF</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
                 <FormField control={form.control} name="dataNascimento" render={({ field }) => (
                     <FormItem><FormLabel>Data Nasc.</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
@@ -177,12 +165,6 @@ export function FormNovoDependente() {
                         <Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Selecione"/></SelectTrigger></FormControl>
                             <SelectContent><SelectItem value="Masculino">Masculino</SelectItem><SelectItem value="Feminino">Feminino</SelectItem></SelectContent>
                         </Select><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="telefone" render={({ field }) => (
-                    <FormItem><FormLabel>Telefone</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
-                 <FormField control={form.control} name="endereco" render={({ field }) => (
-                    <FormItem className="col-span-2"><FormLabel>Endereço</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
             </div>
         </div>

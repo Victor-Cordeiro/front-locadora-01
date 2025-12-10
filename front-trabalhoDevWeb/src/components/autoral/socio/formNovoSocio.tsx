@@ -12,7 +12,6 @@ import { useSocioHook } from "@/hooks/socio";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Plus, Trash, User, Users } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
 
 // Schema de Validação
 const dependenteSchema = z.object({
@@ -20,9 +19,7 @@ const dependenteSchema = z.object({
     nome: z.string().min(1, "Obrigatório"),
     dataNascimento: z.string().min(1, "Obrigatória"),
     sexo: z.string().min(1, "Obrigatório"),
-    cpf: z.string().min(11, "CPF inválido").max(14, "CPF inválido"),
-    endereco: z.string().optional(),
-    telefone: z.string().optional(),
+    // Removido CPF, Endereço e Telefone
 });
 
 const socioSchema = z.object({
@@ -57,15 +54,8 @@ export function FormNovoSocio() {
   async function onSubmit(values: z.infer<typeof socioSchema>) {
     setLoading(true);
     try {
-        const payload = {
-            ...values,
-            dependentes: values.dependentes.map(d => ({
-                ...d,
-                endereco: d.endereco || values.endereco, // Herda endereço se vazio (regra de negócio comum, opcional)
-                telefone: d.telefone || values.telefone
-            }))
-        };
-        await criarSocio(payload);
+        // Envia os dados limpos, sem tentar inserir endereço/cpf em dependentes
+        await criarSocio(values);
         router.push("/socio");
     } finally {
       setLoading(false);
@@ -112,7 +102,7 @@ export function FormNovoSocio() {
             <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-bold text-gray-700 flex items-center gap-2"><Users size={20}/> Dependentes ({fields.length}/3)</h3>
                 {fields.length < 3 && (
-                    <Button type="button" variant="outline" size="sm" onClick={() => append({ numInscricao: "", nome: "", cpf: "", dataNascimento: "", sexo: "", endereco: "", telefone: "" })} className="text-blue-600 border-blue-200 hover:bg-blue-50">
+                    <Button type="button" variant="outline" size="sm" onClick={() => append({ numInscricao: "", nome: "", dataNascimento: "", sexo: "" })} className="text-blue-600 border-blue-200 hover:bg-blue-50">
                         <Plus className="w-4 h-4 mr-2"/> Adicionar
                     </Button>
                 )}
@@ -126,17 +116,15 @@ export function FormNovoSocio() {
                     </Button>
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                         <FormField control={form.control} name={`dependentes.${index}.nome`} render={({ field }) => (<FormItem className="col-span-2"><FormLabel className="text-xs">Nome</FormLabel><FormControl><Input className="h-8 text-sm" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                        <FormField control={form.control} name={`dependentes.${index}.cpf`} render={({ field }) => (<FormItem><FormLabel className="text-xs">CPF</FormLabel><FormControl><Input className="h-8 text-sm" {...field} /></FormControl><FormMessage /></FormItem>)} />
                         <FormField control={form.control} name={`dependentes.${index}.dataNascimento`} render={({ field }) => (<FormItem><FormLabel className="text-xs">Data Nasc.</FormLabel><FormControl><Input type="date" className="h-8 text-sm" {...field} /></FormControl><FormMessage /></FormItem>)} />
                         <FormField control={form.control} name={`dependentes.${index}.numInscricao`} render={({ field }) => (<FormItem><FormLabel className="text-xs">Inscrição</FormLabel><FormControl><Input className="h-8 text-sm" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                        <FormField control={form.control} name={`dependentes.${index}.sexo`} render={({ field }) => (<FormItem><FormLabel className="text-xs">Sexo</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Selecione"/></SelectTrigger></FormControl><SelectContent><SelectItem value="Masculino">Masculino</SelectItem><SelectItem value="Feminino">Feminino</SelectItem></SelectContent></Select><FormMessage /></FormItem>)} />
+                        <FormField control={form.control} name={`dependentes.${index}.sexo`} render={({ field }) => (<FormItem><FormLabel className="text-xs">Sexo</FormLabel><Select onValueChange={field.onChange} value={field.value}><FormControl><SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Selecione"/></SelectTrigger></FormControl><SelectContent><SelectItem value="Masculino">Masculino</SelectItem><SelectItem value="Feminino">Feminino</SelectItem></SelectContent></Select><FormMessage /></FormItem>)} />
                     </div>
                 </div>
             ))}
             {fields.length === 0 && <p className="text-center text-gray-400 italic">Nenhum dependente adicionado.</p>}
             </div>
         </div>
-
         <div className="flex justify-end gap-3">
           <Button type="button" variant="secondary" onClick={() => router.push("/socio")}>Cancelar</Button>
           <Button type="submit" className="bg-[#10476E]" disabled={loading}>{loading ? "Salvando..." : "Salvar Sócio"}</Button>

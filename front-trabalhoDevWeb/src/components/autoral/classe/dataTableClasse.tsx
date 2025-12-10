@@ -2,30 +2,26 @@
 import React from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { useClasseHook } from "@/hooks/classe"; // Importando o hook
-import { FilePen } from "lucide-react"; // Ícone de editar
+import { useClasseHook } from "@/hooks/classe"; 
+import { FilePen } from "lucide-react"; 
 import toast from "react-hot-toast";
-import Link from "next/link"; // Para navegação
-import { AlertDialogExcluir } from "@/components/autoral/classe/alertDialogExcluir"; // Caminho para o seu componente de diálogo de exclusão
+import Link from "next/link"; 
+import { AlertDialogExcluir } from "@/components/autoral/classe/alertDialogExcluir"; 
 
 export function DataTableClasse() {
-  const { classes, listarClasses, deletarClasse } = useClasseHook(); // Usando o hook para listar, deletar classes
+  const { classes, listarClasses, deletarClasse } = useClasseHook(); 
   const [search, setSearch] = React.useState<string>("");
 
-  // Chamando a função de listarClasses no momento da montagem do componente
   React.useEffect(() => {
-    listarClasses(); // Carrega as classes assim que o componente é montado
+    listarClasses(); 
   }, [listarClasses]);
 
-  // Filtrando as classes pela busca
   const filteredClasses = classes?.filter((classe) =>
     classe.nome.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Função para excluir classe
   const handleDelete = async (id: string) => {
     try {
-      // Chama o hook de deletação para remover a classe do backend
       await deletarClasse(Number(id));
       toast.success("Classe deletada com sucesso!");
     } catch {
@@ -56,7 +52,7 @@ export function DataTableClasse() {
                 <TableHead className="text-center">ID</TableHead>
                 <TableHead className="text-center">Nome da Classe</TableHead>
                 <TableHead className="text-center">Valor</TableHead>
-                <TableHead className="text-center">Prazo de Devolução</TableHead>
+                <TableHead className="text-center">Prazo de Devolução em Dias</TableHead>
                 <TableHead className="text-center">Ações</TableHead>
               </TableRow>
             </TableHeader>

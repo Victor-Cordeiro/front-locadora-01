@@ -51,7 +51,6 @@ export function DataTableDependente() {
               <TableRow>
                 <TableHead className="text-center">Nº Inscrição</TableHead>
                 <TableHead className="text-center">Nome</TableHead>
-                <TableHead className="text-center">CPF</TableHead>
                 <TableHead className="text-center">Status</TableHead>
                 <TableHead className="text-center">Ações</TableHead>
               </TableRow>

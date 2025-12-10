@@ -1,4 +1,4 @@
-import { Dependente, DependenteCreate } from "../dependente/dependente";
+import { Dependente, DependenteCreate, DependenteUpdate } from "../dependente/dependente";
 
 export interface SocioCreate {
     numInscricao: string;
@@ -8,8 +8,7 @@ export interface SocioCreate {
     cpf: string;
     endereco: string;
     telefone: string;
-    // Aceita tanto a interface completa (leitura) quanto a de criação (escrita)
-    dependentes: (Dependente | DependenteCreate)[];
+    dependentes: DependenteCreate[];
 }
 
 export interface Socio {
@@ -25,8 +24,16 @@ export interface Socio {
     dependentes: Dependente[];
 }
 
-export interface SocioUpdate extends SocioCreate {
+export interface SocioUpdate {
     id: number;
+    numInscricao: string;
+    nome: string;
+    dataNascimento: string;
+    sexo: string;
+    cpf: string;
+    endereco: string;
+    telefone: string;
+    dependentes: DependenteUpdate[];
 }
 
 export type SocioArray = Socio[];
