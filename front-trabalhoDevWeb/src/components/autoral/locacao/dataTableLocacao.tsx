@@ -17,6 +17,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { DialogVerLocacao } from "./dialogVerLocacao";
 
 export function DataTableLocacao() {
   const { locacoes, listarLocacoes, deletarLocacao } = useLocacaoHook();
@@ -26,15 +27,15 @@ export function DataTableLocacao() {
     listarLocacoes();
   }, [listarLocacoes]);
 
-  // Filtra por ID ou Nome do Cliente (se disponível no DTO opcional)
+  // Agora podemos filtrar por Nome do Cliente e Título também!
   const filtered = locacoes?.filter((loc) =>
     loc.id.toString().includes(search) || 
-    loc.nomeCliente?.toLowerCase().includes(search.toLowerCase())
+    loc.nomeCliente?.toLowerCase().includes(search.toLowerCase()) ||
+    loc.tituloItem?.toLowerCase().includes(search.toLowerCase())
   );
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return "-";
-    // Ajuste para exibir data corretamente sem problemas de fuso horário simples
     return new Date(dateString).toLocaleDateString("pt-BR", {timeZone: 'UTC'});
   };
 
@@ -46,7 +47,7 @@ export function DataTableLocacao() {
     <div className="w-full px-6">
       <div className="flex items-center py-6 gap-4">
         <Input
-          placeholder="Pesquisar por ID..."
+          placeholder="Pesquisar por ID, Cliente ou Filme..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="max-w-sm"
@@ -61,11 +62,12 @@ export function DataTableLocacao() {
             <TableHeader>
               <TableRow>
                 <TableHead className="text-center">ID</TableHead>
+                <TableHead className="text-center">Cliente</TableHead>
+                <TableHead className="text-center">Item</TableHead>
                 <TableHead className="text-center">Data Locação</TableHead>
                 <TableHead className="text-center">Prev. Devolução</TableHead>
                 <TableHead className="text-center">Dt. Devolução</TableHead>
                 <TableHead className="text-center">Valor</TableHead>
-                <TableHead className="text-center">Multa</TableHead>
                 <TableHead className="text-center">Status</TableHead>
                 <TableHead className="text-center">Ações</TableHead>
               </TableRow>
@@ -74,58 +76,69 @@ export function DataTableLocacao() {
               {filtered?.length ? (
                 filtered.map((loc) => {
                     const isDevolvido = !!loc.dtDevolucaoEfetiva;
-                    // Verifica atraso se não devolvido
                     const isAtrasado = !isDevolvido && new Date(loc.dtDevolucaoPrevista) < new Date();
 
                     return (
                   <TableRow key={loc.id}>
                     <TableCell className="text-center font-medium">{loc.id}</TableCell>
-                    <TableCell className="text-center">{formatDate(loc.dtLocacao)}</TableCell>
-                    <TableCell className="text-center">{formatDate(loc.dtDevolucaoPrevista)}</TableCell>
-                    <TableCell className="text-center">{formatDate(loc.dtDevolucaoEfetiva)}</TableCell>
-                    <TableCell className="text-center">{formatMoney(loc.valorCobrado)}</TableCell>
-                    <TableCell className="text-center text-red-600">{loc.multaCobrada ? formatMoney(loc.multaCobrada) : "-"}</TableCell>
+                    <TableCell className="text-center text-xs">{loc.nomeCliente}</TableCell>
+                    <TableCell className="text-center text-xs truncate max-w-[150px]" title={`${loc.tituloItem} (${loc.numSerieItem})`}>
+                        {loc.tituloItem} <br/> 
+                        <span className="text-gray-400 font-mono text-[10px]">{loc.numSerieItem}</span>
+                    </TableCell>
+                    <TableCell className="text-center text-xs">{formatDate(loc.dtLocacao)}</TableCell>
+                    <TableCell className="text-center text-xs">{formatDate(loc.dtDevolucaoPrevista)}</TableCell>
+                    <TableCell className="text-center text-xs">{formatDate(loc.dtDevolucaoEfetiva)}</TableCell>
+                    <TableCell className="text-center text-xs font-semibold">{formatMoney(loc.valorCobrado)}</TableCell>
                     
                     <TableCell className="text-center">
                         {isDevolvido ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">
-                                <CheckCheck size={14}/> Devolvido
+                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold bg-green-100 text-green-700">
+                                <CheckCheck size={12}/> Devolvido
                             </span>
                         ) : isAtrasado ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">
-                                <AlertCircle size={14}/> Atrasado
+                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold bg-red-100 text-red-700">
+                                <AlertCircle size={12}/> Atrasado
                             </span>
                         ) : (
-                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700">
-                                <Clock size={14}/> Em Aberto
+                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700">
+                                <Clock size={12}/> Aberto
                             </span>
                         )}
                     </TableCell>
 
                     <TableCell className="text-center">
                       <div className="flex justify-center items-center space-x-2">
-                        {/* Editar */}
+                        
+                        {/* --- BOTÃO VER DETALHES --- */}
+                        <DialogVerLocacao locacaoId={loc.id} />
+
+                        {/* --- BOTÃO EDITAR --- */}
                         <TooltipProvider>
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <Link href={`/locacao/editarLocacao/${loc.id}`}>
-                                        <FilePen className="cursor-pointer text-blue-500 w-5 h-5" />
+                                        <div className="hover:bg-gray-100 p-2 rounded-full cursor-pointer transition-colors">
+                                            <FilePen className="text-blue-500 w-5 h-5" />
+                                        </div>
                                     </Link>
                                 </TooltipTrigger>
-                                <TooltipContent>Editar</TooltipContent>
+                                <TooltipContent>Editar Locação</TooltipContent>
                             </Tooltip>
                         </TooltipProvider>
 
-                        {/* Excluir */}
+                        {/* --- BOTÃO EXCLUIR --- */}
                         <AlertDialog>
-                            <AlertDialogTrigger>
-                                <Trash2 className="cursor-pointer text-red-500 w-5 h-5" />
+                            <AlertDialogTrigger asChild>
+                                <div className="hover:bg-red-50 p-2 rounded-full cursor-pointer transition-colors">
+                                    <Trash2 className="text-red-500 w-5 h-5" />
+                                </div>
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                                 <AlertDialogHeader>
                                     <AlertDialogTitle>Excluir Locação?</AlertDialogTitle>
                                     <AlertDialogDescription>
-                                        Esta ação não pode ser desfeita.
+                                        Esta ação não pode ser desfeita. Certifique-se que deseja remover este registro histórico.
                                     </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
@@ -142,7 +155,7 @@ export function DataTableLocacao() {
                 )})
               ) : (
                 <TableRow>
-                  <TableCell colSpan={8} className="h-24 text-center">
+                  <TableCell colSpan={9} className="h-24 text-center">
                     Nenhum registro encontrado.
                   </TableCell>
                 </TableRow>

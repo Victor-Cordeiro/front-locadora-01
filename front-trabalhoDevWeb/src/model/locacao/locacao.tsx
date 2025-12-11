@@ -12,10 +12,16 @@ export interface Locacao {
     dtDevolucaoEfetiva?: string;
     valorCobrado: number;
     multaCobrada?: number;
-    // Campos opcionais caso você decida incluí-los no DTO do backend futuramente para facilitar a visualização
-    nomeCliente?: string; 
-    tituloItem?: string;
-    numSerieItem?: string; 
+    
+    // Novos campos vindos do Backend atualizado
+    idCliente: number;
+    nomeCliente: string;
+    numInscricaoCliente?: string;
+    
+    idItem: number;
+    tituloItem: string;
+    numSerieItem: string;
+    tipoItem: string;
 }
 
 export interface LocacaoUpdate extends LocacaoCreate {

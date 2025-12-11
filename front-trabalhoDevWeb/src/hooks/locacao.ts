@@ -13,8 +13,20 @@ export const useLocacaoHook = () => {
       const response = await api.get(`locacoes/listarLocacoes`);
       setLocacoes(response.data);
     } catch (error) {
-      // toast.error("Erro ao listar locações");
-      console.error("Erro de listagem ou endpoint não implementado", error);
+      console.error("Erro de listagem", error);
+      toast.error("Erro ao carregar locações");
+    }
+  }, []);
+
+  // NOVO: Busca apenas locações que ainda não foram devolvidas
+  // Usado no Dialog de Devolução para facilitar a busca
+  const listarLocacoesPendentes = useCallback(async () => {
+    try {
+        const response = await api.get(`locacoes/pendentes`);
+        return response.data as LocacaoArray;
+    } catch (error) {
+        console.error("Erro ao listar pendentes", error);
+        return [];
     }
   }, []);
 
@@ -46,42 +58,37 @@ export const useLocacaoHook = () => {
     }
   }, [listarLocacoes]);
 
-  // Função específica para Devolução por Número de Série (Regra de Negócio)
   const realizarDevolucao = useCallback(async (numSerie: string) => {
     try {
         const response = await api.put(`locacoes/${numSerie}/devolver`);
         toast.success(`Devolução do item ${numSerie} registrada!`);
-        await listarLocacoes(); // Atualiza a lista
+        await listarLocacoes(); 
         return response.data;
     } catch (error) {
         tratarErro(error);
+        throw error;
     }
   }, [listarLocacoes]);
 
   const buscarLocacaoPorId = useCallback(async (id: number) => {
     try {
-      const response = await api.get(`locacoes/buscarLocacao/${id}`); // Ajuste a rota se necessário
+      const response = await api.get(`locacoes/buscarLocacao/${id}`);
       setLocacao(response.data);
       return response.data;
     } catch (error) {
-        // Fallback: tenta pegar da lista carregada se o endpoint de detalhe não existir
-        if(locacoes) {
-            const found = locacoes.find(l => l.id === id);
-            if(found) return found;
-        }
         tratarErro(error);
     }
-  }, [locacoes]);
+  }, []);
 
   const tratarErro = (error: unknown) => {
     const axiosError = error as AxiosError;
     let mensagem = "Ocorreu um erro inesperado";
     if (axiosError.response?.data) {
-        const data = axiosError.response.data as { message?: string };
-        if (data?.message) mensagem = data.message;
+        // Tenta pegar a mensagem de erro do objeto de erro padrão ou customizado
+        const data = axiosError.response.data as any;
+        mensagem = data.message || data.error || JSON.stringify(data);
     }
     toast.error(mensagem);
-    throw error;
   };
 
   return {
@@ -92,6 +99,7 @@ export const useLocacaoHook = () => {
     deletarLocacao,
     realizarDevolucao,
     listarLocacoes,
+    listarLocacoesPendentes,
     buscarLocacaoPorId
   };
 };
