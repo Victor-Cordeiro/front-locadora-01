@@ -61,7 +61,6 @@ export function DataTableDependente() {
                   <TableRow key={dep.id} className={!dep.estahAtivo ? "bg-gray-100 opacity-80" : ""}>
                     <TableCell className="text-center font-medium">{dep.numInscricao}</TableCell>
                     <TableCell className="text-center">{dep.nome}</TableCell>
-                    <TableCell className="text-center">{dep.cpf}</TableCell>
                     <TableCell className="text-center">
                         <span className={`px-2 py-1 rounded-full text-xs font-bold ${dep.estahAtivo ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
                             {dep.estahAtivo ? "ATIVO" : "INATIVO"}

@@ -59,7 +59,12 @@ export function FormEditarItem({ id }: FormEditarItemProps) {
                     form.setValue("numSerie", data.numSerie);
                     form.setValue("dtAquisicao", new Date(data.dtAquisicao).toISOString().split("T")[0]);
                     form.setValue("tipoItem", data.tipoItem);
-                    form.setValue("titulo", String(data.titulo?.id));
+                    
+                    // LÓGICA CORRIGIDA: Usa o ID direto se vier, senão tenta pegar do objeto
+                    const idTitulo = data.tituloId || data.titulo?.id;
+                    if (idTitulo) {
+                        form.setValue("titulo", String(idTitulo));
+                    }
                 }
             });
         }
@@ -146,7 +151,6 @@ export function FormEditarItem({ id }: FormEditarItemProps) {
                         </FormItem>
                     )}
                 />
-                {/* Botões */}
                 <div className="flex justify-end gap-3 mb-6 mt-19">
                     <button
                         type="button"
