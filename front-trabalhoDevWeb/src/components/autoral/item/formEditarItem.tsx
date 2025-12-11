@@ -2,7 +2,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
 import {
     Form,
     FormControl,
@@ -36,7 +35,7 @@ interface FormEditarItemProps {
 }
 
 export function FormEditarItem({ id }: FormEditarItemProps) {
-    const { item, buscarItemPorId, editarItem } = useItemHook();
+    const { buscarItemPorId, editarItem } = useItemHook();
     const { titulos, listarTitulos } = useTituloHook();
     const router = useRouter();
     const [loading, setLoading] = useState(false);

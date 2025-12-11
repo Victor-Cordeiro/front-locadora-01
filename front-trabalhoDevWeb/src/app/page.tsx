@@ -109,7 +109,7 @@ export default function ClientHome() {
                 
                 {/* Seletor de Tipo */}
                 <div className="w-full md:w-[160px] relative border-b md:border-b-0 md:border-r border-gray-100">
-                    <Select value={filterType} onValueChange={(val: any) => { setFilterType(val); setSearchTerm(""); }}>
+                    <Select value={filterType} onValueChange={(val) => { setFilterType(val as FilterType); setSearchTerm(""); }}>
                         <SelectTrigger className="h-10 border-none bg-transparent focus:ring-0 text-gray-600 font-medium px-4 rounded-l-full hover:bg-gray-50 transition-colors text-sm">
                             <div className="flex items-center gap-2">
                                 {filterType === 'nome' && <Search size={14} className="text-[#10476E]" />}
@@ -193,7 +193,7 @@ export default function ClientHome() {
                     <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-blue-50 text-xs backdrop-blur-sm border border-white/20">
                         <Filter size={12} />
                         Filtrando por {filterType}: 
-                        <span className="font-semibold text-white">"{searchTerm}"</span>
+                        <span className="font-semibold text-white">&quot;{searchTerm}&quot;</span>
                     </span>
                 </div>
             )}

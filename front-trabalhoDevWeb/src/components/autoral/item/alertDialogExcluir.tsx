@@ -10,7 +10,6 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 import { useItemHook } from "@/hooks/item";
 import { Trash2 } from "lucide-react";
 

@@ -1,6 +1,5 @@
 "use client";
 import { FormEditarSocio } from "@/components/autoral/socio/formEditarSocio";
-import Link from "next/link";
 import { use } from "react";
 
 export default function EditarSocioPage({ params }: { params: Promise<{ id: string }> }) {

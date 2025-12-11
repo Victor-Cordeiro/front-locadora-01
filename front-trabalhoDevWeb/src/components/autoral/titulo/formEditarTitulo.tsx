@@ -2,7 +2,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -79,7 +78,7 @@ export function FormEditarTitulo({ id }: FormEditarTituloProps) {
           form.setValue("categoria", titulo.categoria);
           form.setValue("classe", String(titulo.classe?.id));
           form.setValue("diretor", String(titulo.diretor?.id));
-          form.setValue("atores", titulo.atores.map((ator: { id: any; }) => ator.id));
+          form.setValue("atores", titulo.atores.map((ator: { id: number; }) => ator.id));
         }
       } catch (error) {
         console.error("Erro ao buscar o título:", error);

@@ -12,7 +12,7 @@ export const useDependenteHook = () => {
     try {
       const response = await api.get(`dependentes/listarDependentes`);
       setDependentes(response.data);
-    } catch (error) {
+    } catch {
       toast.error("Erro ao listar dependentes");
     }
   }, []);

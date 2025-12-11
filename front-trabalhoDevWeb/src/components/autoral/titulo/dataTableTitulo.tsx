@@ -4,9 +4,6 @@ import React from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { useTituloHook } from "@/hooks/titulo";
-import { FilePen } from "lucide-react";
-import Link from "next/link";
-import { toast } from "sonner";
 import { DialogVerTitulo } from "@/components/autoral/titulo/DialogVerTitulo";
 import { Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -28,7 +25,7 @@ export function DataTableTitulo() {
   const handleDelete = async (id: string) => {
     try {
       await deletarTitulo(Number(id));
-    } catch (error) {
+    } catch {
       // O erro já é tratado no hook
     }
   };

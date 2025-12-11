@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Titulo } from "@/model/titulo/titulo";
 import { useMovieImage } from "@/hooks/useMovieImage";
-import { User, Film, Tag, ImageOff, Loader2, X, Calendar, DollarSign, Clock } from "lucide-react";
+import { User, Film, ImageOff, Loader2, X, Calendar, DollarSign, Clock } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area"; // Se não tiver scroll-area instalado, troque por uma div com overflow-y-auto
 
 interface MovieDetailModalProps {

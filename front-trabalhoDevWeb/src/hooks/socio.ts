@@ -12,7 +12,7 @@ export const useSocioHook = () => {
     try {
       const response = await api.get(`socios/listarSocios`);
       setSocios(response.data);
-    } catch (error) {
+    } catch {
       toast.error("Erro ao listar sócios");
     }
   }, []);

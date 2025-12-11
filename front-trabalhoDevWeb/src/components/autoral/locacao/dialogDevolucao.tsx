@@ -45,7 +45,7 @@ export function DialogDevolucao() {
         try {
             await realizarDevolucao(selectedNumSerie);
             setOpen(false); // Fecha ao concluir com sucesso
-        } catch (error) {
+        } catch {
             // Erro já tratado no hook
         }
     };

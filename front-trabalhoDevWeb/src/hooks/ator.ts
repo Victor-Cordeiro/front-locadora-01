@@ -44,7 +44,7 @@ export const useAtorHook = () => {
 
   // Deletar ator (Delete)
   // Listar todos os atores
-  const listarAtores = async () => {
+  const listarAtores = useCallback(async () => {
     try {
       const response = await api.get(`atores/listarAtores`);
       setAtores(response.data);
@@ -58,7 +58,7 @@ export const useAtorHook = () => {
       toast.error(mensagem);
       throw error;
     }
-  };
+  }, []);
 
   const deletarAtor = useCallback(async (id: number) => {
     try {

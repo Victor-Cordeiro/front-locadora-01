@@ -85,7 +85,7 @@ export const useLocacaoHook = () => {
     let mensagem = "Ocorreu um erro inesperado";
     if (axiosError.response?.data) {
         // Tenta pegar a mensagem de erro do objeto de erro padrão ou customizado
-        const data = axiosError.response.data as any;
+        const data = axiosError.response.data as { message?: string; error?: string };
         mensagem = data.message || data.error || JSON.stringify(data);
     }
     toast.error(mensagem);

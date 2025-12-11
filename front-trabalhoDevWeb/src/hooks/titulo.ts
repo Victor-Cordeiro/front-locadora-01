@@ -70,7 +70,7 @@ export const useTituloHook = () => {
       toast.success("Título deletado com sucesso!");
       await listarTitulos();
     } catch (error) {
-      const axiosError = error as AxiosError<any>;
+      const axiosError = error as AxiosError<{ message?: string }>;
 
       // Fallback: alguns backends usam a rota no formato 
       // titulos/{id}/deletarTitulo
@@ -81,7 +81,7 @@ export const useTituloHook = () => {
           await listarTitulos();
           return;
         } catch (fallbackError) {
-          const ax2 = fallbackError as AxiosError<any>;
+          const ax2 = fallbackError as AxiosError<{ message?: string }>;
           let mensagem = "Erro ao deletar título";
           if (ax2.response?.data) {
             const data = ax2.response.data as { message?: string };
